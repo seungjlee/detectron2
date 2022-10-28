@@ -21,8 +21,47 @@ from .. import DatasetCatalog, MetadataCatalog
 This file contains functions to parse COCO-format annotations into dicts in "Detectron2 format".
 """
 
+from collections import defaultdict
+from pycocotools.coco import COCO
+
 
 logger = logging.getLogger(__name__)
+
+class Nightowls(COCO):
+    def __init__(self, annotation_file=None):
+        super().__init__(annotation_file)
+        logger.info(f"Created Nightowls: {annotation_file}")
+
+        bad_keys = []
+        valid_img_ids = set()
+        imgToAnns, catToImgs = defaultdict(list), defaultdict(list)
+        for key, value in self.anns.items():
+            if not 'iscrowd' in value:
+                value['iscrowd'] = 0
+            if value['category_id'] in [2,3]: # Map all to COCO person.
+                value['category_id'] = 1
+            if value['ignore'] == 0 and value['category_id'] == 1:
+                catToImgs[value['category_id']].append(value['image_id'])
+                imgToAnns[value['image_id']].append(value)
+                valid_img_ids.add(value['image_id'])
+            else:
+                bad_keys.append(key)
+            del value['ignore']
+
+        for key in bad_keys:
+            del self.anns[key]
+
+        bad_img_keys = []
+        for key, value in self.imgs.items():
+            if value['id'] not in valid_img_ids:
+                bad_img_keys.append(key)
+
+        for key in bad_img_keys:
+            del self.imgs[key]
+
+        self.catToImgs = catToImgs
+        self.imgToAnns = imgToAnns
+        logger.info(f"Nightowls annotations: {len(self.anns)}, {len(self.imgs)} images")
 
 __all__ = ["load_coco_json", "load_sem_seg", "convert_to_coco_json", "register_coco_instances"]
 
@@ -61,12 +100,14 @@ def load_coco_json(json_file, image_root, dataset_name=None, extra_annotation_ke
         1. This function does not read the image files.
            The results do not have the "image" field.
     """
-    from pycocotools.coco import COCO
 
     timer = Timer()
     json_file = PathManager.get_local_path(json_file)
     with contextlib.redirect_stdout(io.StringIO()):
-        coco_api = COCO(json_file)
+        if "nightowls" in dataset_name:
+            coco_api = Nightowls(json_file)
+        else:
+            coco_api = COCO(json_file)
     if timer.seconds() > 1:
         logger.info("Loading {} takes {:.2f} seconds.".format(json_file, timer.seconds()))
 

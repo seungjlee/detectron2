@@ -50,6 +50,8 @@ from detectron2.modeling import build_model
 from detectron2.solver import build_lr_scheduler, build_optimizer
 from detectron2.utils.events import EventStorage
 
+from detectron2.data.datasets import register_coco_instances
+
 logger = logging.getLogger("detectron2")
 
 
@@ -184,6 +186,12 @@ def setup(args):
 
 
 def main(args):
+    register_coco_instances("nightowls_train", {},
+                            "nightowls/nightowls_training.json",
+                            "nightowls/nightowls_training")
+    register_coco_instances("nightowls_val", {},
+                            "nightowls/nightowls_validation.json",
+                            "nightowls/nightowls_validation")
     cfg = setup(args)
 
     model = build_model(cfg)

@@ -18,7 +18,7 @@ from tabulate import tabulate
 import detectron2.utils.comm as comm
 from detectron2.config import CfgNode
 from detectron2.data import MetadataCatalog
-from detectron2.data.datasets.coco import convert_to_coco_json
+from detectron2.data.datasets.coco import convert_to_coco_json, Nightowls
 from detectron2.structures import Boxes, BoxMode, pairwise_iou
 from detectron2.utils.file_io import PathManager
 from detectron2.utils.logger import create_small_table
@@ -143,7 +143,10 @@ class COCOEvaluator(DatasetEvaluator):
 
         json_file = PathManager.get_local_path(self._metadata.json_file)
         with contextlib.redirect_stdout(io.StringIO()):
-            self._coco_api = COCO(json_file)
+            if "nightowls" in dataset_name:
+                self._coco_api = Nightowls(json_file)
+            else:
+                self._coco_api = COCO(json_file)
 
         # Test set json files do not contain annotations (evaluation must be
         # performed using the COCO evaluation server).
