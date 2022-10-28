@@ -47,13 +47,6 @@ class COCOeval_opt(COCOeval):
         elif p.iouType == "keypoints":
             computeIoU = self.computeOks
 
-        # for imgId in p.imgIds:
-        #     for catId in catIds:
-        #         gt = self._gts[imgId,catId]
-        #         for x in gt:
-        #             if not 'iscrowd' in x:
-        #                 x['iscrowd'] = 0
-
         self.ious = {
             (imgId, catId): computeIoU(imgId, catId) for imgId in p.imgIds for catId in catIds
         }  # bottleneck
