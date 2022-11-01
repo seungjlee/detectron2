@@ -145,6 +145,7 @@ class COCOEvaluator(DatasetEvaluator):
         with contextlib.redirect_stdout(io.StringIO()):
             if "nightowls" in dataset_name:
                 self._coco_api = Nightowls(json_file)
+                self._tasks = ["bbox"]
             else:
                 self._coco_api = COCO(json_file)
 
@@ -338,7 +339,7 @@ class COCOEvaluator(DatasetEvaluator):
         """
 
         metrics = {
-            "bbox": ["AP", "AP50", "AP75", "APs", "APm", "APl"],
+            "bbox": ["AP", "AP50", "AP75", "APs", "APm", "APl", "AR1", "AR10", "AR100", "ARs", "ARm", "ARl"],
             "segm": ["AP", "AP50", "AP75", "APs", "APm", "APl"],
             "keypoints": ["AP", "AP50", "AP75", "APm", "APl"],
         }[iou_type]
