@@ -8,6 +8,13 @@ MODEL:
     NUM_GROUPS: 32
     WIDTH_PER_GROUP: 8
     DEPTH: 101
+
 SOLVER:
   STEPS: (210000, 250000)
   MAX_ITER: 270000
+
+DATASETS:
+  # TRAIN: ("coco_2017_train",)
+  # TEST: ("coco_2017_val",)
+  TRAIN: ("nightowls_train",)
+  TEST: ("nightowls_val",)

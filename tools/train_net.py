@@ -38,6 +38,7 @@ from detectron2.evaluation import (
 )
 from detectron2.modeling import GeneralizedRCNNWithTTA
 
+from detectron2.data.datasets import register_coco_instances
 
 def build_evaluator(cfg, dataset_name, output_folder=None):
     """
@@ -122,6 +123,12 @@ def setup(args):
 
 
 def main(args):
+    register_coco_instances("nightowls_train", {},
+                            "nightowls/nightowls_training.json",
+                            "nightowls/nightowls_training")
+    register_coco_instances("nightowls_val", {},
+                            "nightowls/nightowls_validation.json",
+                            "nightowls/nightowls_validation")
     cfg = setup(args)
 
     if args.eval_only:
