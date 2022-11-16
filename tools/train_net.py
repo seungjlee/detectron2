@@ -40,6 +40,16 @@ from detectron2.modeling import GeneralizedRCNNWithTTA
 
 from detectron2.data.datasets import register_coco_instances
 
+from detectron2 import model_zoo
+from detectron2.config import instantiate
+from detectron2.engine.defaults import create_ddp_model
+import torch
+
+def ConfigureViT():
+    model = model_zoo.get_config("common/models/mask_rcnn_vitdet.py").model
+    model.roi_heads.mask_in_features = None
+    return instantiate(model)
+
 def build_evaluator(cfg, dataset_name, output_folder=None):
     """
     Create evaluator(s) for a given dataset.
@@ -79,7 +89,6 @@ def build_evaluator(cfg, dataset_name, output_folder=None):
         return evaluator_list[0]
     return DatasetEvaluators(evaluator_list)
 
-
 class Trainer(DefaultTrainer):
     """
     We use the "DefaultTrainer" which contains pre-defined default logic for
@@ -109,6 +118,20 @@ class Trainer(DefaultTrainer):
         res = OrderedDict({k + "_TTA": v for k, v in res.items()})
         return res
 
+    #
+    # Overrides
+    #
+    @classmethod
+    def build_model(cls, cfg):
+        if "_vitdet_" in cfg.MODEL.WEIGHTS:
+            model = ConfigureViT()
+        else:
+            model = super().build_model(cfg)
+        model.to("cuda")
+        return model
+    @classmethod
+    def build_train_loader(cls, cfg):
+        return super().build_train_loader(cfg)
 
 def setup(args):
     """
@@ -133,15 +156,18 @@ def main(args):
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
+        model = create_ddp_model(model)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
             cfg.MODEL.WEIGHTS, resume=args.resume
         )
-        res = Trainer.test(cfg, model)
-        if cfg.TEST.AUG.ENABLED:
-            res.update(Trainer.test_with_TTA(cfg, model))
-        if comm.is_main_process():
-            verify_results(cfg, res)
-        return res
+        model.eval()
+        with torch.no_grad():
+            res = Trainer.test(cfg, model)
+            if cfg.TEST.AUG.ENABLED:
+                res.update(Trainer.test_with_TTA(cfg, model))
+            if comm.is_main_process():
+                verify_results(cfg, res)
+            return res
 
     """
     If you'd like to do anything fancier than the standard training logic,

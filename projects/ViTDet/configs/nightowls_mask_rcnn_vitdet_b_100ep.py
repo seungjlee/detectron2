@@ -21,7 +21,7 @@ dataloader.train.mapper.augmentations = [
     L(T.FixedSizeCrop)(crop_size=(image_size, image_size), pad=False),
 ]
 dataloader.train.mapper.image_format = "RGB"
-dataloader.train.total_batch_size = 64
+dataloader.train.total_batch_size = 32
 # recompute boxes due to cropping
 dataloader.train.mapper.recompute_boxes = True
 
@@ -39,13 +39,12 @@ train.ddp.fp16_compression = True
 train.init_checkpoint = "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
 
 # Schedule
-# 100 ep = 184375 iters * 64 images/iter / 118000 images/ep
-train.max_iter = 184375
+train.max_iter = 60000
 
 lr_multiplier = L(WarmupParamScheduler)(
     scheduler=L(MultiStepParamScheduler)(
         values=[1.0, 0.1, 0.01],
-        milestones=[163889, 177546],
+        milestones=[20000, 40000],
         num_updates=train.max_iter,
     ),
     warmup_length=250 / train.max_iter,

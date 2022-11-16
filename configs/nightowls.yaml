@@ -1,0 +1,28 @@
+_BASE_: "./Base-RCNN-FPN.yaml"
+MODEL:
+  WEIGHTS: "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
+  MASK_ON: False
+
+DATASETS:
+  TRAIN: ("coco_2017_train", "nightowls_train")
+  TEST: ("coco_2017_val","nightowls_val")
+
+INPUT:
+  FORMAT: "RGB"
+  MIN_SIZE_TEST: 1024
+  MAX_SIZE_TEST: 1024
+  MIN_SIZE_TRAIN: (1024,)
+  MAX_SIZE_TRAIN: 1024
+
+SOLVER:
+  AMP:
+    ENABLED: True
+  IMS_PER_BATCH: 4
+  BASE_LR: 0.02
+  STEPS: (160000, 320000, 400000)
+  MAX_ITER: 480000
+
+TEST:
+  EVAL_PERIOD: 4000
+
+OUTPUT_DIR: "output/Train_RCNN_ViT-Base"

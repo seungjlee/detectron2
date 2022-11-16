@@ -41,7 +41,7 @@ dataloader.train = L(build_detection_train_loader)(
 )
 
 dataloader.test = L(build_detection_test_loader)(
-    dataset=L(get_detection_dataset_dicts)(names="nightowls_val", filter_empty=False),
+    dataset=L(get_detection_dataset_dicts)(names="coco_2017_val", filter_empty=False),
     mapper=L(DatasetMapper)(
         is_train=False,
         augmentations=[
