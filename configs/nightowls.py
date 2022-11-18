@@ -10,19 +10,10 @@ from detectron2.data import (
 )
 from detectron2.evaluation import COCOEvaluator
 
-from detectron2.data.datasets import register_coco_instances
-
-register_coco_instances("nightowls_train", {},
-                        "nightowls/nightowls_training.json",
-                        "nightowls/nightowls_training")
-register_coco_instances("nightowls_val", {},
-                        "nightowls/nightowls_validation.json",
-                        "nightowls/nightowls_validation")
-
 dataloader = OmegaConf.create()
 
 dataloader.train = L(build_detection_train_loader)(
-    dataset=L(get_detection_dataset_dicts)(names="nightowls_train"),
+    dataset=L(get_detection_dataset_dicts)(names=("coco_2017_train","nightowls_train")),
     mapper=L(DatasetMapper)(
         is_train=True,
         augmentations=[
@@ -34,9 +25,9 @@ dataloader.train = L(build_detection_train_loader)(
             L(T.RandomFlip)(horizontal=True),
         ],
         image_format="BGR",
-        use_instance_mask=True,
+        use_instance_mask=False,
     ),
-    total_batch_size=16,
+    total_batch_size=4,
     num_workers=4,
 )
 

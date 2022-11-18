@@ -1,5 +1,7 @@
 _BASE_: "./Base-RCNN-FPN.yaml"
 MODEL:
+  BACKBONE:
+    NAME: "ViT-Base"
   WEIGHTS: "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
   MASK_ON: False
 
@@ -19,10 +21,10 @@ SOLVER:
     ENABLED: True
   IMS_PER_BATCH: 4
   BASE_LR: 0.02
-  STEPS: (160000, 320000, 400000)
-  MAX_ITER: 480000
+  STEPS: (160000, 320000)
+  MAX_ITER: 400000
 
 TEST:
-  EVAL_PERIOD: 4000
+  EVAL_PERIOD: 5000
 
-OUTPUT_DIR: "output/Train_RCNN_ViT-Base"
+OUTPUT_DIR: "output/Train2_RCNN_ViT-Base"

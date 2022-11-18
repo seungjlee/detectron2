@@ -45,11 +45,6 @@ from detectron2.config import instantiate
 from detectron2.engine.defaults import create_ddp_model
 import torch
 
-def ConfigureViT():
-    model = model_zoo.get_config("common/models/mask_rcnn_vitdet.py").model
-    model.roi_heads.mask_in_features = None
-    return instantiate(model)
-
 def build_evaluator(cfg, dataset_name, output_folder=None):
     """
     Create evaluator(s) for a given dataset.
@@ -96,6 +91,8 @@ class Trainer(DefaultTrainer):
     are working on a new research project. In that case you can write your
     own training loop. You can use "tools/plain_train_net.py" as an example.
     """
+    def __init__(self, cfg):
+        super().__init__(cfg)
 
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
@@ -123,15 +120,47 @@ class Trainer(DefaultTrainer):
     #
     @classmethod
     def build_model(cls, cfg):
-        if "_vitdet_" in cfg.MODEL.WEIGHTS:
-            model = ConfigureViT()
+        if "ViT" in cfg.MODEL.BACKBONE.NAME:
+            logger = logging.getLogger("detectron2.trainer")
+            logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} model.")
+            model_config = model_zoo.get_config("common/models/mask_rcnn_vitdet.py").model
+            model_config.roi_heads.mask_in_features = None
+            model = instantiate(model_config)
         else:
             model = super().build_model(cfg)
         model.to("cuda")
         return model
+
     @classmethod
     def build_train_loader(cls, cfg):
-        return super().build_train_loader(cfg)
+        if "ViT" in cfg.MODEL.BACKBONE.NAME:
+            logger = logging.getLogger("detectron2.trainer")
+            logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} train data loader.")
+            train_loader_config = model_zoo.get_config("nightowls_mask_rcnn_vitdet_b_100ep.py").dataloader.train
+            return instantiate(train_loader_config)
+        else:
+            return super().build_train_loader(cfg)
+
+    @classmethod
+    def build_optimizer(cls, cfg, model):
+        if "ViT" in cfg.MODEL.BACKBONE.NAME:
+            logger = logging.getLogger("detectron2.trainer")
+            logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} optimizer.")
+            optimizer_config = model_zoo.get_config("nightowls_mask_rcnn_vitdet_b_100ep.py").optimizer
+            optimizer_config.params.model = model
+            return instantiate(optimizer_config)
+        else:
+            return super().build_optimizer(cfg, model)
+
+    @classmethod
+    def build_lr_scheduler(cls, cfg, optimizer):
+        if "ViT" in cfg.MODEL.BACKBONE.NAME:
+            logger = logging.getLogger("detectron2.trainer")
+            logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} learning rate scheduler.")
+            scheduler_config = model_zoo.get_config("nightowls_mask_rcnn_vitdet_b_100ep.py").lr_multiplier
+            return instantiate(scheduler_config)
+        else:
+            return super().build_lr_scheduler(cfg, optimizer)
 
 def setup(args):
     """
