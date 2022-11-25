@@ -377,7 +377,7 @@ class DefaultTrainer(TrainerBase):
         optimizer = self.build_optimizer(cfg, model)
         data_loader = self.build_train_loader(cfg)
 
-        model = create_ddp_model(model, broadcast_buffers=False)
+        model = create_ddp_model(model, fp16_compression=cfg.SOLVER.AMP.ENABLED, broadcast_buffers=False)
         self._trainer = (AMPTrainer if cfg.SOLVER.AMP.ENABLED else SimpleTrainer)(
             model, data_loader, optimizer
         )

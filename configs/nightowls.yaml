@@ -2,8 +2,12 @@ _BASE_: "./Base-RCNN-FPN.yaml"
 MODEL:
   BACKBONE:
     NAME: "ViT-Base"
-  WEIGHTS: "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
   MASK_ON: False
+  WEIGHTS: "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
+  # WEIGHTS: "nightowls_rcnn_vitdet_b.pth"
+
+DATALOADER:
+  NUM_WORKERS: 1
 
 DATASETS:
   TRAIN: ("coco_2017_train", "nightowls_train")
@@ -11,20 +15,22 @@ DATASETS:
 
 INPUT:
   FORMAT: "RGB"
-  MIN_SIZE_TEST: 1024
-  MAX_SIZE_TEST: 1024
-  MIN_SIZE_TRAIN: (1024,)
-  MAX_SIZE_TRAIN: 1024
+  MIN_SIZE_TEST: 640
+  MAX_SIZE_TEST: 640
+  # These are set in nightowls_mask_rcnn_vitdet_b_100ep.py
+  # MIN_SIZE_TRAIN: (1024,)
+  # MAX_SIZE_TRAIN: 1024
 
 SOLVER:
   AMP:
     ENABLED: True
-  IMS_PER_BATCH: 4
-  BASE_LR: 0.02
-  STEPS: (160000, 320000)
-  MAX_ITER: 400000
+  STEPS: (12400, 49600)
+  MAX_ITER: 62000
+  # These are set in nightowls_mask_rcnn_vitdet_b_100ep.py
+  # IMS_PER_BATCH: 6
+  # BASE_LR: 0.02
 
 TEST:
-  EVAL_PERIOD: 5000
+  EVAL_PERIOD: 1000
 
-OUTPUT_DIR: "output/Train2_RCNN_ViT-Base"
+OUTPUT_DIR: "output/Train3_RCNN_ViT-Base"

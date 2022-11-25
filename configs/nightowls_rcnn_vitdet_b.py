@@ -9,28 +9,38 @@ from detectron2.modeling.backbone.vit import get_vit_lr_decay_rate
 #from ..common.coco_loader_lsj import dataloader
 import detectron2.data.transforms as T
 
+IMAGE_SIZE = 640  # For original model configuration, set this to 1024.
+TRAIN_BATCH_SIZE = 24  # 24*6200 = 148800 ~ 1 epoch
+
+# These seem to get overriden so they are set again in nightowls.yaml.
+# Need to figure this out.
+MAX_ITERATIONS = 62000  # 62000 ~ 10 epochs
+SCHEDULER_STEPS = [12400, 49600]
+
 #region Data Loader
 # Data using LSJ
-image_size = 1024
 dataloader = model_zoo.get_config("nightowls.py").dataloader
 dataloader.train.mapper.augmentations = [
     L(T.RandomFlip)(horizontal=True),  # flip first
     L(T.ResizeScale)(
-        min_scale=0.1, max_scale=2.0, target_height=image_size, target_width=image_size
+        min_scale=0.1, max_scale=2.0, target_height=IMAGE_SIZE, target_width=IMAGE_SIZE
     ),
-    L(T.FixedSizeCrop)(crop_size=(image_size, image_size), pad=False),
+    L(T.FixedSizeCrop)(crop_size=(IMAGE_SIZE, IMAGE_SIZE), pad=False),
 ]
 dataloader.train.mapper.image_format = "RGB"
-dataloader.train.total_batch_size = 4
+dataloader.train.total_batch_size = TRAIN_BATCH_SIZE
+dataloader.train.num_workers = 1
 # recompute boxes due to cropping
 dataloader.train.mapper.recompute_boxes = False
 
 dataloader.test.mapper.augmentations = [
-    L(T.ResizeShortestEdge)(short_edge_length=image_size, max_size=image_size),
+    L(T.ResizeShortestEdge)(short_edge_length=IMAGE_SIZE, max_size=IMAGE_SIZE),
 ]
 #endregion
 
 model = model_zoo.get_config("common/models/mask_rcnn_vitdet.py").model
+model.backbone.net.img_size = IMAGE_SIZE
+model.backbone.square_pad = IMAGE_SIZE
 
 # Initialization and trainer settings
 train = model_zoo.get_config("common/train.py").train
@@ -39,12 +49,12 @@ train.ddp.fp16_compression = True
 train.init_checkpoint = "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
 
 # Schedule
-train.max_iter = 400000
+train.max_iter = MAX_ITERATIONS
 
 lr_multiplier = L(WarmupParamScheduler)(
     scheduler=L(MultiStepParamScheduler)(
         values=[1.0, 0.1, 0.01],
-        milestones=[160000, 320000],
+        milestones=SCHEDULER_STEPS,
         num_updates=train.max_iter,
     ),
     warmup_length=250 / train.max_iter,

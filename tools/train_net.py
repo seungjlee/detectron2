@@ -123,7 +123,7 @@ class Trainer(DefaultTrainer):
         if "ViT" in cfg.MODEL.BACKBONE.NAME:
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} model.")
-            model_config = model_zoo.get_config("common/models/mask_rcnn_vitdet.py").model
+            model_config = model_zoo.get_config("nightowls_rcnn_vitdet_b.py").model
             model_config.roi_heads.mask_in_features = None
             model = instantiate(model_config)
         else:
@@ -136,7 +136,7 @@ class Trainer(DefaultTrainer):
         if "ViT" in cfg.MODEL.BACKBONE.NAME:
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} train data loader.")
-            train_loader_config = model_zoo.get_config("nightowls_mask_rcnn_vitdet_b_100ep.py").dataloader.train
+            train_loader_config = model_zoo.get_config("nightowls_rcnn_vitdet_b.py").dataloader.train
             return instantiate(train_loader_config)
         else:
             return super().build_train_loader(cfg)
@@ -146,7 +146,7 @@ class Trainer(DefaultTrainer):
         if "ViT" in cfg.MODEL.BACKBONE.NAME:
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} optimizer.")
-            optimizer_config = model_zoo.get_config("nightowls_mask_rcnn_vitdet_b_100ep.py").optimizer
+            optimizer_config = model_zoo.get_config("nightowls_rcnn_vitdet_b.py").optimizer
             optimizer_config.params.model = model
             return instantiate(optimizer_config)
         else:
@@ -157,7 +157,7 @@ class Trainer(DefaultTrainer):
         if "ViT" in cfg.MODEL.BACKBONE.NAME:
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} learning rate scheduler.")
-            scheduler_config = model_zoo.get_config("nightowls_mask_rcnn_vitdet_b_100ep.py").lr_multiplier
+            scheduler_config = model_zoo.get_config("nightowls_rcnn_vitdet_b.py").lr_multiplier
             return instantiate(scheduler_config)
         else:
             return super().build_lr_scheduler(cfg, optimizer)
@@ -185,12 +185,13 @@ def main(args):
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
-        model = create_ddp_model(model)
+        print(model)
+        model = create_ddp_model(model, fp16_compression=True)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
             cfg.MODEL.WEIGHTS, resume=args.resume
         )
         model.eval()
-        with torch.no_grad():
+        with torch.no_grad(), torch.amp.autocast("cuda"):
             res = Trainer.test(cfg, model)
             if cfg.TEST.AUG.ENABLED:
                 res.update(Trainer.test_with_TTA(cfg, model))
