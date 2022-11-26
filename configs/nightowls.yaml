@@ -3,8 +3,8 @@ MODEL:
   BACKBONE:
     NAME: "ViT-Base"
   MASK_ON: False
-  WEIGHTS: "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
-  # WEIGHTS: "nightowls_rcnn_vitdet_b.pth"
+  # WEIGHTS: "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
+  WEIGHTS: "nightowls_rcnn_vitdet_b_640.pth"
 
 DATALOADER:
   NUM_WORKERS: 1
@@ -24,8 +24,9 @@ INPUT:
 SOLVER:
   AMP:
     ENABLED: True
-  STEPS: (12400, 49600)
-  MAX_ITER: 62000
+  # 24*6200 = 148800 ~ 1 epoch
+  STEPS: (24800, 99200)
+  MAX_ITER: 144000 # 6200*20 (20 epochs)
   # These are set in nightowls_mask_rcnn_vitdet_b_100ep.py
   # IMS_PER_BATCH: 6
   # BASE_LR: 0.02
@@ -33,4 +34,4 @@ SOLVER:
 TEST:
   EVAL_PERIOD: 1000
 
-OUTPUT_DIR: "output/Train3_RCNN_ViT-Base"
+OUTPUT_DIR: "output/Train3.1_RCNN_ViT-Base"
