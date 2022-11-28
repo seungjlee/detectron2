@@ -45,6 +45,11 @@ from detectron2.config import instantiate
 from detectron2.engine.defaults import create_ddp_model
 import torch
 
+VisionTransformers = {
+    "ViT-Base": "nightowls_rcnn_vitdet_b.py",
+    "MViTv2-Base": "nightowls_cascade_rcnn_mvitv2_b_in21k.py",
+}
+
 def build_evaluator(cfg, dataset_name, output_folder=None):
     """
     Create evaluator(s) for a given dataset.
@@ -120,10 +125,10 @@ class Trainer(DefaultTrainer):
     #
     @classmethod
     def build_model(cls, cfg):
-        if "ViT" in cfg.MODEL.BACKBONE.NAME:
+        if cfg.MODEL.BACKBONE.NAME in VisionTransformers.keys():
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} model.")
-            model_config = model_zoo.get_config("nightowls_rcnn_vitdet_b.py").model
+            model_config = model_zoo.get_config(VisionTransformers[cfg.MODEL.BACKBONE.NAME]).model
             model_config.roi_heads.mask_in_features = None
             model = instantiate(model_config)
         else:
@@ -133,20 +138,20 @@ class Trainer(DefaultTrainer):
 
     @classmethod
     def build_train_loader(cls, cfg):
-        if "ViT" in cfg.MODEL.BACKBONE.NAME:
+        if cfg.MODEL.BACKBONE.NAME in VisionTransformers.keys():
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} train data loader.")
-            train_loader_config = model_zoo.get_config("nightowls_rcnn_vitdet_b.py").dataloader.train
+            train_loader_config = model_zoo.get_config(VisionTransformers[cfg.MODEL.BACKBONE.NAME]).dataloader.train
             return instantiate(train_loader_config)
         else:
             return super().build_train_loader(cfg)
 
     @classmethod
     def build_optimizer(cls, cfg, model):
-        if "ViT" in cfg.MODEL.BACKBONE.NAME:
+        if cfg.MODEL.BACKBONE.NAME in VisionTransformers.keys():
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} optimizer.")
-            optimizer_config = model_zoo.get_config("nightowls_rcnn_vitdet_b.py").optimizer
+            optimizer_config = model_zoo.get_config(VisionTransformers[cfg.MODEL.BACKBONE.NAME]).optimizer
             optimizer_config.params.model = model
             return instantiate(optimizer_config)
         else:
@@ -154,10 +159,10 @@ class Trainer(DefaultTrainer):
 
     @classmethod
     def build_lr_scheduler(cls, cfg, optimizer):
-        if "ViT" in cfg.MODEL.BACKBONE.NAME:
+        if cfg.MODEL.BACKBONE.NAME in VisionTransformers.keys():
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} learning rate scheduler.")
-            scheduler_config = model_zoo.get_config("nightowls_rcnn_vitdet_b.py").lr_multiplier
+            scheduler_config = model_zoo.get_config(VisionTransformers[cfg.MODEL.BACKBONE.NAME]).lr_multiplier
             return instantiate(scheduler_config)
         else:
             return super().build_lr_scheduler(cfg, optimizer)

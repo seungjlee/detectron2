@@ -1,0 +1,31 @@
+_BASE_: "./Base-RCNN-FPN.yaml"
+MODEL:
+  BACKBONE:
+    NAME: "MViTv2-Base"
+  MASK_ON: False
+  # WEIGHTS: "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
+  WEIGHTS: "cascade_mask_rcnn_mvitv2_b_in21k_model_final_8c3da3.pkl"
+
+DATALOADER:
+  NUM_WORKERS: 1
+
+DATASETS:
+  TRAIN: ("coco_2017_train", "nightowls_train")
+  TEST: ("coco_2017_val","nightowls_val")
+
+INPUT:
+  FORMAT: "RGB"
+  MIN_SIZE_TEST: 640
+  MAX_SIZE_TEST: 640
+
+SOLVER:
+  AMP:
+    ENABLED: True
+  # 16*10000 = 160000 > 1 epoch
+  STEPS: (20000, 80000)
+  MAX_ITER: 100000 # 10000*10 (~10.8 epochs)
+
+TEST:
+  EVAL_PERIOD: 5000
+
+OUTPUT_DIR: "output/Train1_RCNN_MViTv2-Base"

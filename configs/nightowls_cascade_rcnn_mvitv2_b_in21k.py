@@ -18,24 +18,32 @@ from detectron2.modeling.roi_heads import (
 # from ..common.coco_loader_lsj import dataloader
 import detectron2.data.transforms as T
 
+IMAGE_SIZE = 640  # For original model configuration, set this to 1024.
+TRAIN_BATCH_SIZE = 16  # 16*10000 = 160000 > 1 epoch
+
+# These seem to get overriden so they are set again in nightowls_mvitv2.yaml.
+# Need to figure this out.
+MAX_ITERATIONS = 100000  # 100000 ~ 10 epochs
+SCHEDULER_STEPS = [20000, 80000]
+
 #region Data Loader
 # Data using LSJ
-image_size = 1024
 dataloader = model_zoo.get_config("nightowls.py").dataloader
 dataloader.train.mapper.augmentations = [
     L(T.RandomFlip)(horizontal=True),  # flip first
     L(T.ResizeScale)(
-        min_scale=0.1, max_scale=2.0, target_height=image_size, target_width=image_size
+        min_scale=0.1, max_scale=2.0, target_height=IMAGE_SIZE, target_width=IMAGE_SIZE
     ),
-    L(T.FixedSizeCrop)(crop_size=(image_size, image_size), pad=False),
+    L(T.FixedSizeCrop)(crop_size=(IMAGE_SIZE, IMAGE_SIZE), pad=False),
 ]
 dataloader.train.mapper.image_format = "RGB"
-dataloader.train.total_batch_size = 64
-# recompute boxes due to cropping
-dataloader.train.mapper.recompute_boxes = True
+dataloader.train.mapper.use_instance_mask = False
+dataloader.train.total_batch_size = TRAIN_BATCH_SIZE
+dataloader.train.num_workers = 1
+dataloader.train.mapper.recompute_boxes = False
 
 dataloader.test.mapper.augmentations = [
-    L(T.ResizeShortestEdge)(short_edge_length=image_size, max_size=image_size),
+    L(T.ResizeShortestEdge)(short_edge_length=IMAGE_SIZE, max_size=IMAGE_SIZE),
 ]
 #endregion
 
@@ -55,7 +63,7 @@ model.backbone.bottom_up = L(MViT)(
     out_features=("scale2", "scale3", "scale4", "scale5"),
 )
 model.backbone.in_features = "${.bottom_up.out_features}"
-model.backbone.square_pad = 1024
+model.backbone.square_pad = IMAGE_SIZE
 
 # New heads and LN
 model.backbone.norm = "LN"  # Use LN in FPN
@@ -97,15 +105,15 @@ model.roi_heads.update(
 train = model_zoo.get_config("common/train.py").train
 train.amp.enabled = True
 train.ddp.fp16_compression = True
-train.init_checkpoint = "cascade_mask_rcnn_mvitv2_b_in21k_model_final_8c3da3.pkl"
+train.init_checkpoint = ""
 
 # Schedule
-# 100 ep = 184375 iters * 64 images/iter / 118000 images/ep
-train.max_iter = 184375
+train.max_iter = MAX_ITERATIONS
+
 lr_multiplier = L(WarmupParamScheduler)(
     scheduler=L(MultiStepParamScheduler)(
         values=[1.0, 0.1, 0.01],
-        milestones=[163889, 177546],
+        milestones=SCHEDULER_STEPS,
         num_updates=train.max_iter,
     ),
     warmup_length=250 / train.max_iter,

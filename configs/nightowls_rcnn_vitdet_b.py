@@ -30,7 +30,6 @@ dataloader.train.mapper.augmentations = [
 dataloader.train.mapper.image_format = "RGB"
 dataloader.train.total_batch_size = TRAIN_BATCH_SIZE
 dataloader.train.num_workers = 1
-# recompute boxes due to cropping
 dataloader.train.mapper.recompute_boxes = False
 
 dataloader.test.mapper.augmentations = [
