@@ -46,8 +46,9 @@ from detectron2.engine.defaults import create_ddp_model
 import torch
 
 VisionTransformers = {
-    "ViT-Base": "nightowls_rcnn_vitdet_b.py",
-    "MViTv2-Base": "nightowls_cascade_rcnn_mvitv2_b_in21k.py",
+    "ViT-Base":            "nightowls_rcnn_vitdet_b.py",
+    "Cascade-ViT-Base" :   "nightowls_cascade_rcnn_vitdet_b.py",
+    "Cascade-MViTv2-Base": "nightowls_cascade_rcnn_mvitv2_b_in21k.py",
 }
 
 def build_evaluator(cfg, dataset_name, output_folder=None):

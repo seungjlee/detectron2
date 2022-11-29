@@ -8,14 +8,18 @@ from detectron2.modeling.roi_heads import (
     CascadeROIHeads,
 )
 
-from .nightowls_mask_rcnn_vitdet_b_100ep import (
+from .nightowls_rcnn_vitdet_b import (
     dataloader,
     lr_multiplier,
     model,
-    train,
     optimizer,
-    get_vit_lr_decay_rate,
+    train,
 )
+
+BOX_HEADS_FULLY_CONNECTED_DIM = 640
+TRAIN_BATCH_SIZE = 16  # 16*10000 = 160000 > 1 epoch
+
+dataloader.train.total_batch_size = TRAIN_BATCH_SIZE
 
 # arguments that don't exist for Cascade R-CNN
 [model.roi_heads.pop(k) for k in ["box_head", "box_predictor", "proposal_matcher"]]
@@ -26,14 +30,14 @@ model.roi_heads.update(
         L(FastRCNNConvFCHead)(
             input_shape=ShapeSpec(channels=256, height=7, width=7),
             conv_dims=[256, 256, 256, 256],
-            fc_dims=[1024],
+            fc_dims=[BOX_HEADS_FULLY_CONNECTED_DIM],
             conv_norm="LN",
         )
         for _ in range(3)
     ],
     box_predictors=[
         L(FastRCNNOutputLayers)(
-            input_shape=ShapeSpec(channels=1024),
+            input_shape=ShapeSpec(channels=BOX_HEADS_FULLY_CONNECTED_DIM),
             test_score_thresh=0.05,
             box2box_transform=L(Box2BoxTransform)(weights=(w1, w1, w2, w2)),
             cls_agnostic_bbox_reg=True,
