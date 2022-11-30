@@ -3,8 +3,7 @@ MODEL:
   BACKBONE:
     NAME: "Cascade-MViTv2-Base"
   MASK_ON: False
-  # WEIGHTS: "mask_rcnn_vitdet_b_model_final_61ccd1.pkl"
-  WEIGHTS: "cascade_mask_rcnn_mvitv2_b_in21k_model_final_8c3da3.pkl"
+  WEIGHTS: "Cascade_RCNN_MViTv2-Base_640.pth"
 
 DATALOADER:
   NUM_WORKERS: 1
@@ -15,17 +14,17 @@ DATASETS:
 
 INPUT:
   FORMAT: "RGB"
-  MIN_SIZE_TEST: 640
-  MAX_SIZE_TEST: 640
+  MIN_SIZE_TEST: 512
+  MAX_SIZE_TEST: 512
 
 SOLVER:
   AMP:
     ENABLED: True
-  # 16*10000 = 160000 > 1 epoch
-  STEPS: (20000, 80000)
-  MAX_ITER: 100000 # 10000*10 (~10.8 epochs)
+  # 20*7500 = 150000 ~ 1 epoch
+  STEPS: (15000, 60000)
+  MAX_ITER: 75000 # 7500*10 (~10 epochs)
 
 TEST:
   EVAL_PERIOD: 5000
 
-OUTPUT_DIR: "output/Train1_RCNN_MViTv2-Base"
+OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-Base_512"

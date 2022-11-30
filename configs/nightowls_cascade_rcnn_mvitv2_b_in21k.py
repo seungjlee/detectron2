@@ -18,8 +18,9 @@ from detectron2.modeling.roi_heads import (
 # from ..common.coco_loader_lsj import dataloader
 import detectron2.data.transforms as T
 
-IMAGE_SIZE = 640  # For original model configuration, set this to 1024.
-TRAIN_BATCH_SIZE = 16  # 16*10000 = 160000 > 1 epoch
+TRAIN_BATCH_SIZE = 20  # 20*7500 = 150000 ~ 1 epoch
+IMAGE_SIZE = 512  # For original model configuration, set this to 1024.
+BOX_HEADS_FULLY_CONNECTED_DIM = 512  # For original model configuration, set this to 1024.
 
 # These seem to get overriden so they are set again in nightowls_mvitv2.yaml.
 # Need to figure this out.
@@ -80,14 +81,14 @@ model.roi_heads.update(
         L(FastRCNNConvFCHead)(
             input_shape=ShapeSpec(channels=256, height=7, width=7),
             conv_dims=[256, 256, 256, 256],
-            fc_dims=[1024],
+            fc_dims=[BOX_HEADS_FULLY_CONNECTED_DIM],
             conv_norm="LN",
         )
         for _ in range(3)
     ],
     box_predictors=[
         L(FastRCNNOutputLayers)(
-            input_shape=ShapeSpec(channels=1024),
+            input_shape=ShapeSpec(channels=BOX_HEADS_FULLY_CONNECTED_DIM),
             test_score_thresh=0.05,
             box2box_transform=L(Box2BoxTransform)(weights=(w1, w1, w2, w2)),
             cls_agnostic_bbox_reg=True,
