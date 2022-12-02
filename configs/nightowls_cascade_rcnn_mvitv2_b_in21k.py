@@ -20,7 +20,7 @@ import detectron2.data.transforms as T
 
 TRAIN_BATCH_SIZE = 20  # 20*7500 = 150000 ~ 1 epoch
 IMAGE_SIZE = 512  # For original model configuration, set this to 1024.
-BOX_HEADS_FULLY_CONNECTED_DIM = 512  # For original model configuration, set this to 1024.
+BOX_HEADS_FULLY_CONNECTED_DIM = 1024  # For original model configuration, set this to 1024.
 
 # These seem to get overriden so they are set again in nightowls_mvitv2.yaml.
 # Need to figure this out.

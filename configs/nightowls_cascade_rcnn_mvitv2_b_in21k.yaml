@@ -27,4 +27,4 @@ SOLVER:
 TEST:
   EVAL_PERIOD: 5000
 
-OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-Base_512"
+OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-B_512_FC1024"
