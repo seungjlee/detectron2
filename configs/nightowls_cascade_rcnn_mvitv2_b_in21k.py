@@ -18,8 +18,11 @@ from detectron2.modeling.roi_heads import (
 # from ..common.coco_loader_lsj import dataloader
 import detectron2.data.transforms as T
 
-TRAIN_BATCH_SIZE = 20  # 20*7500 = 150000 ~ 1 epoch
-IMAGE_SIZE = 512  # For original model configuration, set this to 1024.
+#
+# Nightowls + COCO train images: 147330
+#
+TRAIN_BATCH_SIZE = 16  # 16*10000 = 160000 > 1 epoch
+IMAGE_SIZE = 640  # For original model configuration, set this to 1024.
 BOX_HEADS_FULLY_CONNECTED_DIM = 1024  # For original model configuration, set this to 1024.
 
 # These seem to get overriden so they are set again in nightowls_mvitv2.yaml.
