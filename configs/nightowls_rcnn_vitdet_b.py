@@ -10,7 +10,7 @@ from detectron2.modeling.backbone.vit import get_vit_lr_decay_rate
 import detectron2.data.transforms as T
 
 IMAGE_SIZE = 640  # For original model configuration, set this to 1024.
-TRAIN_BATCH_SIZE = 24  # 24*6200 = 148800 ~ 1 epoch
+TRAIN_BATCH_SIZE = 16
 
 # These seem to get overriden so they are set again in nightowls.yaml.
 # Need to figure this out.

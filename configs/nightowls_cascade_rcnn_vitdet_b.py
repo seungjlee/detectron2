@@ -16,7 +16,7 @@ from .nightowls_rcnn_vitdet_b import (
     train,
 )
 
-BOX_HEADS_FULLY_CONNECTED_DIM = 640
+BOX_HEADS_FULLY_CONNECTED_DIM = 1024
 TRAIN_BATCH_SIZE = 16  # 16*10000 = 160000 > 1 epoch
 
 dataloader.train.total_batch_size = TRAIN_BATCH_SIZE
