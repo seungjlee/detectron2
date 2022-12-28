@@ -10,14 +10,14 @@ from detectron2.modeling.roi_heads import (
 
 from .nightowls_rcnn_vitdet_b import GetConfigs
 
-IMAGE_SIZE = 640  # For original model configuration, set this to 1024.
-TRAIN_BATCH_SIZE = 16
+IMAGE_SIZE = 320  # For original model configuration, set this to 1024.
+TRAIN_BATCH_SIZE = 30
 BOX_HEADS_FULLY_CONNECTED_DIM = 1024
 
 # These seem to get overriden so they are set again in the yaml file.
 # Need to figure this out.
-MAX_ITERATIONS = 62000  # 62000 ~ 10 epochs
-SCHEDULER_STEPS = [12400, 49600]
+MAX_ITERATIONS = 60000
+SCHEDULER_STEPS = [8000, 52000]
 
 dataloader, lr_multiplier, model, optimizer, train = GetConfigs(
     image_size=IMAGE_SIZE,

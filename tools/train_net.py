@@ -132,6 +132,12 @@ class Trainer(DefaultTrainer):
             model_config = model_zoo.get_config(VisionTransformers[cfg.MODEL.BACKBONE.NAME]).model
             model_config.roi_heads.mask_in_features = None
             model = instantiate(model_config)
+
+            # Freeze some modules.
+            model.backbone.requires_grad_(True)
+            model.proposal_generator.requires_grad_(True)
+            model.roi_heads.box_pooler.requires_grad_(True)
+            model.roi_heads.box_pooler.requires_grad_(True)
         else:
             model = super().build_model(cfg)
         model.to("cuda")
