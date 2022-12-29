@@ -21,14 +21,15 @@ import detectron2.data.transforms as T
 #
 # Nightowls + COCO train images: 147330
 #
-TRAIN_BATCH_SIZE = 16  # 16*10000 = 160000 > 1 epoch
-IMAGE_SIZE = 640  # For original model configuration, set this to 1024.
-BOX_HEADS_FULLY_CONNECTED_DIM = 1024  # For original model configuration, set this to 1024.
+TRAIN_BATCH_SIZE = 30
+IMAGE_SIZE = 320  # For original model configuration, set this to 1024.
+
+BOX_HEADS_FULLY_CONNECTED_DIM = 1024
 
 # These seem to get overriden so they are set again in nightowls_mvitv2.yaml.
 # Need to figure this out.
-MAX_ITERATIONS = 100000  # 100000 ~ 10 epochs
-SCHEDULER_STEPS = [20000, 80000]
+MAX_ITERATIONS = 60000
+SCHEDULER_STEPS = [8000, 52000]
 
 #region Data Loader
 # Data using LSJ
