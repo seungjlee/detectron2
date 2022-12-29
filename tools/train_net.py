@@ -134,8 +134,8 @@ class Trainer(DefaultTrainer):
             model = instantiate(model_config)
 
             # Freeze some modules.
-            model.backbone.requires_grad_(True)
-            model.proposal_generator.requires_grad_(True)
+            model.backbone.requires_grad_(False)
+            model.proposal_generator.requires_grad_(False)
             model.roi_heads.box_pooler.requires_grad_(True)
             model.roi_heads.box_pooler.requires_grad_(True)
         else:
