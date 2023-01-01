@@ -134,7 +134,8 @@ class Trainer(DefaultTrainer):
             model = instantiate(model_config)
 
             # Freeze some modules.
-            model.backbone.net.requires_grad_(False) # Freeze vision transformer only.
+            # model.backbone.net.requires_grad_(False)      # Freeze vision transformer only for ViT.
+            model.backbone.bottom_up.requires_grad_(False)  # Freeze vision transformer only for MViT.
             model.proposal_generator.requires_grad_(True)
             model.roi_heads.box_pooler.requires_grad_(True)
             model.roi_heads.box_pooler.requires_grad_(True)
