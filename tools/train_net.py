@@ -194,6 +194,15 @@ def main(args):
     register_coco_instances("nightowls_val", {},
                             "nightowls/nightowls_validation.json",
                             "nightowls/nightowls_validation")
+    register_coco_instances("coco_2017_train_10_plus_shots", {},
+                            "datasets/coco/annotations/instances_train2017_10_plus_shots.json",
+                            "datasets/coco/train2017")
+    register_coco_instances("coco_2017_train_50_plus_shots", {},
+                            "datasets/coco/annotations/instances_train2017_50_plus_shots.json",
+                            "datasets/coco/train2017")
+    register_coco_instances("coco_2017_train_100_plus_shots", {},
+                            "datasets/coco/annotations/instances_train2017_100_plus_shots.json",
+                            "datasets/coco/train2017")
     cfg = setup(args)
 
     if args.eval_only:

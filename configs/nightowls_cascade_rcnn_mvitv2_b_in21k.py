@@ -22,7 +22,7 @@ import detectron2.data.transforms as T
 # Nightowls + COCO train images: 147330
 #
 TRAIN_BATCH_SIZE = 30
-IMAGE_SIZE = 320  # For original model configuration, set this to 1024.
+IMAGE_SIZE = 640  # For original model configuration, set this to 1024.
 
 BOX_HEADS_FULLY_CONNECTED_DIM = 1024
 

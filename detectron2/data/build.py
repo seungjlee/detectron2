@@ -205,12 +205,15 @@ def print_instances_class_histogram(dataset_dicts, class_names):
         numalign="left",
         stralign="center",
     )
-    log_first_n(
-        logging.INFO,
-        "Distribution of instances among all {} categories:\n".format(num_classes)
-        + colored(table, "cyan"),
-        key="message",
-    )
+    # log_first_n(
+    #     logging.INFO,
+    #     "Distribution of instances among all {} categories:\n".format(num_classes)
+    #     + colored(table, "cyan"),
+    #     key="message",
+    # )
+    logger = logging.getLogger(__name__)
+    logger.info("Distribution of instances among all {} categories:\n".format(num_classes)
+                + colored(table, "cyan"))
 
 
 def get_detection_dataset_dicts(

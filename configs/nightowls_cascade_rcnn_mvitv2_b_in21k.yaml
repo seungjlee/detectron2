@@ -4,25 +4,28 @@ MODEL:
     NAME: "Cascade-MViTv2-Base"
   MASK_ON: False
   # WEIGHTS: "detectron2://ViTDet/COCO/cascade_mask_rcnn_mvitv2_b_in21k/f325820315/model_final_8c3da3.pkl"
-  WEIGHTS: "Cascade_RCNN_MViTv2-B_320.pth"
+  WEIGHTS: "Cascade_RCNN_MViTv2-B_640_COCO.pth"
 
 DATALOADER:
   NUM_WORKERS: 1
 
 DATASETS:
   TRAIN: ("coco_2017_train",)  # NOTE: For training dataset, using config in nightowls.py.
-  TEST: ("coco_2017_val","nightowls_val")
+  #TEST: ("coco_2017_val","nightowls_val")
+  #TEST: ("coco_2017_train_100_plus_shots",)
+  TEST: ("coco_2017_val",)
 
 INPUT:
   FORMAT: "RGB"
-  MIN_SIZE_TEST: 320
-  MAX_SIZE_TEST: 320
+  MIN_SIZE_TEST: 640
+  MAX_SIZE_TEST: 640
 
 SOLVER:
   AMP:
     ENABLED: True
-  # COCO:              1 epoch == 117266
-  # COCO + NightOwls:  1 epoch == 147330
+  # COCO:                 1 epoch == 117266
+  # COCO + NightOwls:     1 epoch == 147330
+  # COCO100 + NightOwls:  1 epoch == 33147
   STEPS: (10000, 40000)
   MAX_ITER: 50000  # COCO + NightOwls: ~10 epochs with batch size 30 (2 GPU's, i.e., 15 per GPU)
 
