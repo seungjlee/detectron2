@@ -80,7 +80,8 @@ for img_id, annotations in tqdm(image_annotations.items()):
                     break
 
 # Validate samples.
-# It seems the numbers printed when running get_detection_dataset_dicts() are not consistent.
+# The numbers printed when running get_detection_dataset_dicts() can be lower since detectron2 removes
+# instances where iscrowd==True.
 for index, class_id in enumerate(id2class.keys()):
     for annotation in sample_annotations[index]:
         assert annotation["category_id"] == class_id
