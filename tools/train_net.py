@@ -23,7 +23,8 @@ from collections import OrderedDict
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
-from detectron2.data import MetadataCatalog
+from detectron2.config import LazyCall as L
+from detectron2.data import MetadataCatalog, get_detection_dataset_dicts
 from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, hooks, launch
 from detectron2.evaluation import (
     CityscapesInstanceEvaluator,
@@ -134,10 +135,10 @@ class Trainer(DefaultTrainer):
             model = instantiate(model_config)
 
             # Freeze some modules.
-            # model.backbone.net.requires_grad_(False)      # Freeze vision transformer only for ViT.
-            model.backbone.bottom_up.requires_grad_(False)  # Freeze vision transformer only for MViT.
-            model.proposal_generator.requires_grad_(True)
-            model.roi_heads.box_pooler.requires_grad_(True)
+            # model.backbone.net.requires_grad_(False)        # Freeze vision transformer only for ViT.
+            # model.backbone.bottom_up.requires_grad_(False)  # Freeze vision transformer only for MViT.
+            model.backbone.requires_grad_(False)              # Freeze full backbone.
+            model.proposal_generator.requires_grad_(False)
             model.roi_heads.box_pooler.requires_grad_(True)
         else:
             model = super().build_model(cfg)
@@ -150,6 +151,7 @@ class Trainer(DefaultTrainer):
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} train data loader.")
             train_loader_config = model_zoo.get_config(VisionTransformers[cfg.MODEL.BACKBONE.NAME]).dataloader.train
+            train_loader_config.dataset = L(get_detection_dataset_dicts)(names=cfg.DATASETS.TRAIN)
             return instantiate(train_loader_config)
         else:
             return super().build_train_loader(cfg)

@@ -1,7 +1,6 @@
 #%%
 import logging
 import json
-import random
 
 from itertools import chain
 from tqdm import tqdm
@@ -36,24 +35,6 @@ for a in tqdm(data["annotations"]):
         image_annotations[a["image_id"]] = [a]
 
 # %%
-# anno = {i: [] for i in id2class.keys()}
-# for a in tqdm(data["annotations"]):
-#     if a["iscrowd"] == 1 or a["image_id"] in bad_image_ids:
-#         continue
-
-#     anno[a["category_id"]].append(a)
-
-# %%
-def GetClassAnnotations(class_key, annotations):
-    img_ids = {}
-    for a in annotations[class_key]:
-        if a["image_id"] in img_ids:
-            img_ids[a["image_id"]].append(a)
-        else:
-            img_ids[a["image_id"]] = [a]
-    return img_ids
-
-random.seed(777)
 index = 0
 used_ids = set()
 
