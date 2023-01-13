@@ -8,7 +8,7 @@ from detectron2.data import get_detection_dataset_dicts
 from detectron2.data.datasets import register_coco_instances
 
 # %%
-SHOTS = 100
+SHOTS = 50
 data_path = "../tools/datasets/coco/annotations/instances_train2017.json"
 data = json.load(open(data_path))
 
@@ -83,9 +83,13 @@ with open(save_path, "w") as f:
 
 # %%
 logging.basicConfig(level=logging.INFO)
-register_coco_instances(f"coco_2017_train_{SHOTS}_plus_shots", {},
-                        save_path,
-                        "datasets/coco/images/train2017")
+try:
+    register_coco_instances(f"coco_2017_train_{SHOTS}_plus_shots", {},
+                            save_path,
+                            "datasets/coco/images/train2017")
+except AssertionError as e:
+    print(str(e))
+
 # %%
 dataset = get_detection_dataset_dicts(names=(f"coco_2017_train_{SHOTS}_plus_shots",))
 
