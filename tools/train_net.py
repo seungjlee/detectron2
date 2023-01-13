@@ -138,7 +138,7 @@ class Trainer(DefaultTrainer):
             # model.backbone.net.requires_grad_(False)        # Freeze vision transformer only for ViT.
             # model.backbone.bottom_up.requires_grad_(False)  # Freeze vision transformer only for MViT.
             model.backbone.requires_grad_(False)              # Freeze full backbone.
-            model.proposal_generator.requires_grad_(False)
+            model.proposal_generator.requires_grad_(True)
             model.roi_heads.box_pooler.requires_grad_(True)
         else:
             model = super().build_model(cfg)
@@ -199,12 +199,20 @@ def main(args):
     register_coco_instances("coco_2017_train_10_plus_shots", {},
                             "datasets/coco/annotations/instances_train2017_10_plus_shots.json",
                             "datasets/coco/train2017")
+    # COCO Few Shots
     register_coco_instances("coco_2017_train_50_plus_shots", {},
                             "datasets/coco/annotations/instances_train2017_50_plus_shots.json",
                             "datasets/coco/train2017")
     register_coco_instances("coco_2017_train_100_plus_shots", {},
                             "datasets/coco/annotations/instances_train2017_100_plus_shots.json",
                             "datasets/coco/train2017")
+    # NightOwls Few Shots
+    number_of_shots = (14, 28, 53, 231, 518)
+    for shots in number_of_shots:
+        register_coco_instances(f"nightowls_train_{shots}_shots", {},
+                                f"nightowls/nightowls_training_{shots}_shots.json",
+                                "nightowls/nightowls_training")
+
     cfg = setup(args)
 
     if args.eval_only:

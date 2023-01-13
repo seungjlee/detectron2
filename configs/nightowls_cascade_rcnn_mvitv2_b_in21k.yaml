@@ -10,7 +10,7 @@ DATALOADER:
   NUM_WORKERS: 1
 
 DATASETS:
-  TRAIN: ("coco_2017_train_10_plus_shots","nightowls_train")
+  TRAIN: ("coco_2017_train_100_plus_shots","nightowls_train_14_shots")
   TEST: ("coco_2017_val","nightowls_val")
 
 INPUT:
@@ -32,4 +32,4 @@ SOLVER:
 TEST:
   EVAL_PERIOD: 1000
 
-OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-B_640_COCO10_L2"
+OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-B_640_COCO100_NO14_L1"

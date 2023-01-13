@@ -9,6 +9,7 @@ from detectron2.data.datasets import register_coco_instances
 
 # %%
 MIN_SHOTS = 100
+GENERATE_FOR_COCO = True
 data_path = "../nightowls_json/nightowls_training.json"
 data = json.load(open(data_path))
 
@@ -96,7 +97,7 @@ total_shots = sum([len(x) for x in sample_annotations])
 new_data = {
     "images": list(chain(*sample_images)),
     "annotations": list(chain(*sample_annotations)),
-    "categories": categories,
+    "categories": data["categories"] if GENERATE_FOR_COCO else categories,
 }
 
 # Not including nightowls in data_set_name here to print the full breakdown with get_detection_dataset_dicts
