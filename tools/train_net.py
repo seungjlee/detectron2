@@ -19,6 +19,7 @@ You may want to write your own script with your datasets and other customization
 import logging
 import os
 from collections import OrderedDict
+from fvcore.common.param_scheduler import MultiStepParamScheduler
 
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
@@ -172,7 +173,11 @@ class Trainer(DefaultTrainer):
         if cfg.MODEL.BACKBONE.NAME in VisionTransformers.keys():
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} learning rate scheduler.")
-            scheduler_config = model_zoo.get_config(VisionTransformers[cfg.MODEL.BACKBONE.NAME]).lr_multiplier
+            scheduler_config = L(MultiStepParamScheduler)(
+                values=[1.0, 0.1, 0.01],
+                milestones=cfg.SOLVER.STEPS,
+                num_updates=cfg.SOLVER.MAX_ITER,
+            )
             return instantiate(scheduler_config)
         else:
             return super().build_lr_scheduler(cfg, optimizer)
