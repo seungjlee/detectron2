@@ -212,7 +212,7 @@ def main(args):
                             "datasets/coco/annotations/instances_train2017_100_plus_shots.json",
                             "datasets/coco/train2017")
     # NightOwls Few Shots
-    number_of_shots = (14, 28, 53, 231, 518)
+    number_of_shots = (18, 38, 92, 149, 269, 626)
     for shots in number_of_shots:
         register_coco_instances(f"nightowls_train_{shots}_shots", {},
                                 f"nightowls/nightowls_training_{shots}_shots.json",
