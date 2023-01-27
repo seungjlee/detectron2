@@ -40,13 +40,14 @@ class Nightowls(COCO):
                 value['iscrowd'] = 0
             if value['category_id'] in [2,3]: # Map all to COCO person.
                 value['category_id'] = 1
-            if value['ignore'] == 0 and value['category_id'] == 1:
+            if ("ignore" not in value.keys() or value['ignore'] == 0) and value['category_id'] == 1:
                 catToImgs[value['category_id']].append(value['image_id'])
                 imgToAnns[value['image_id']].append(value)
                 valid_img_ids.add(value['image_id'])
             else:
                 bad_keys.append(key)
-            del value['ignore']
+            if "ignore" in value.keys():
+                value.pop('ignore')
 
         for key in bad_keys:
             del self.anns[key]
@@ -104,7 +105,7 @@ def load_coco_json(json_file, image_root, dataset_name=None, extra_annotation_ke
     timer = Timer()
     json_file = PathManager.get_local_path(json_file)
     with contextlib.redirect_stdout(io.StringIO()):
-        if "nightowls" in dataset_name:
+        if "nightowls" in dataset_name and "reannotated" not in dataset_name:
             coco_api = Nightowls(json_file)
         else:
             coco_api = COCO(json_file)

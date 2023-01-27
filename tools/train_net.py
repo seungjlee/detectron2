@@ -217,6 +217,12 @@ def main(args):
         register_coco_instances(f"nightowls_train_{shots}_shots", {},
                                 f"nightowls/nightowls_training_{shots}_shots.json",
                                 "nightowls/nightowls_training")
+    # NightOwls Reannotated Few Shots
+    number_of_shots = (193, 336, 799)
+    for shots in number_of_shots:
+        register_coco_instances(f"nightowls_reannotated_train_{shots}_shots", {},
+                                f"nightowls/nightowls_reannotated_train_{shots}_shots.json",
+                                "nightowls/nightowls_training")
 
     cfg = setup(args)
 

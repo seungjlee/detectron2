@@ -1,5 +1,47 @@
 ## Class & Size Distribution in NightOwls Few Shot Annotation Files  
 
+### **nightowls_reannotated_train_193_shots.json**  
+| Category             |   S  |   M  |   L  | Total |
+|:---------------------|-----:|-----:|-----:|------:|
+| person               |   14 |   38 |   14 |    66 |
+| bicycle              |    2 |    6 |    3 |    11 |
+| car                  |   12 |   42 |   25 |    79 |
+| motorcycle           |    1 |    1 |    1 |     3 |
+| bus                  |    1 |    2 |    3 |     6 |
+| truck                |    1 |    2 |    3 |     6 |
+| traffic light        |    9 |    9 |    1 |    19 |
+| stop sign            |    1 |    1 |    1 |     3 |
+|                      |      |      |      |       |
+| Totals               |   41 |  101 |   51 |   193 |
+
+### **nightowls_reannotated_train_336_shots.json**  
+| Category             |   S  |   M  |   L  | Total |
+|:---------------------|-----:|-----:|-----:|------:|
+| person               |   18 |   67 |   24 |   109 |
+| bicycle              |    2 |   11 |    6 |    19 |
+| car                  |   22 |   67 |   46 |   135 |
+| motorcycle           |    2 |    2 |    2 |     6 |
+| bus                  |    2 |    3 |    4 |     9 |
+| truck                |    2 |    4 |    4 |    10 |
+| traffic light        |   19 |   20 |    2 |    41 |
+| stop sign            |    2 |    3 |    2 |     7 |
+|                      |      |      |      |       |
+| Totals               |   69 |  177 |   90 |   336 |
+
+### **nightowls_reannotated_train_799_shots.json**  
+| Category             |   S  |   M  |   L  | Total |
+|:---------------------|-----:|-----:|-----:|------:|
+| person               |   36 |  164 |   62 |   262 |
+| bicycle              |    5 |   37 |   11 |    53 |
+| car                  |   60 |  157 |  104 |   321 |
+| motorcycle           |    5 |    5 |    5 |    15 |
+| bus                  |    5 |    7 |    8 |    20 |
+| truck                |    5 |   11 |   15 |    31 |
+| traffic light        |   46 |   31 |    5 |    82 |
+| stop sign            |    5 |    5 |    5 |    15 |
+|                      |      |      |      |       |
+| Totals               |  167 |  417 |  215 |   799 |
+
 ### **nightowls_training_18_shots.json**  
 | Category             |   S  |   M  |   L  | Total |
 |:---------------------|-----:|-----:|-----:|------:|

@@ -10,8 +10,8 @@ DATALOADER:
   NUM_WORKERS: 1
 
 DATASETS:
-  TRAIN: ("coco_2017_train_100_plus_shots","nightowls_train_269_shots")
-  TEST: ("coco_2017_val","nightowls_val","nightowls_train_269_shots")
+  TRAIN: ("coco_2017_train_100_plus_shots","nightowls_reannotated_train_193_shots")
+  TEST: ("coco_2017_val","nightowls_val","nightowls_reannotated_train_193_shots")
 
 INPUT:
   FORMAT: "RGB"
@@ -38,4 +38,4 @@ SOLVER:
 TEST:
   EVAL_PERIOD: 1000
 
-OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-B_640_COCO100_NO269_L1_80e"
+OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-B_640_COCO100_NOR193_L1_80e"
