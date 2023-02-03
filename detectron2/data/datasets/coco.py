@@ -109,6 +109,10 @@ def load_coco_json(json_file, image_root, dataset_name=None, extra_annotation_ke
             coco_api = Nightowls(json_file)
         else:
             coco_api = COCO(json_file)
+            if "nightowls" in dataset_name:
+                for value in coco_api.anns.values():
+                    if not 'iscrowd' in value:
+                        value['iscrowd'] = 0
     if timer.seconds() > 1:
         logger.info("Loading {} takes {:.2f} seconds.".format(json_file, timer.seconds()))
 

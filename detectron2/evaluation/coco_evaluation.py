@@ -143,11 +143,15 @@ class COCOEvaluator(DatasetEvaluator):
 
         json_file = PathManager.get_local_path(self._metadata.json_file)
         with contextlib.redirect_stdout(io.StringIO()):
-            if "nightowls" in dataset_name:
+            if "nightowls" in dataset_name and "reannotated" not in dataset_name:
                 self._coco_api = Nightowls(json_file)
                 self._tasks = ["bbox"]
             else:
                 self._coco_api = COCO(json_file)
+                if "nightowls" in dataset_name:
+                    for value in self._coco_api.anns.values():
+                        if not 'iscrowd' in value:
+                            value['iscrowd'] = 0
 
         # Test set json files do not contain annotations (evaluation must be
         # performed using the COCO evaluation server).
