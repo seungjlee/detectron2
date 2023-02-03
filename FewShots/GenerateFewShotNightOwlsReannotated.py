@@ -10,7 +10,7 @@ from detectron2.data.datasets import register_coco_instances
 from pycocotools.cocoeval import Params
 
 # %%
-MIN_SHOTS_TARGET = 1
+MIN_SHOTS_TARGET = 5
 data_path = "../tools/nightowls/nightowls_training_reannotated_yolov7_e6e_vitdet_h75ep.json"
 data = json.load(open(data_path))
 
@@ -121,6 +121,11 @@ new_data = {
     "annotations": list(chain(*sample_annotations)),
     "categories": data["categories"],
 }
+
+# Validate image ID's in annotations.
+image_ids = set(img["id"] for img in new_data["images"])
+for annotation in new_data["annotations"]:
+    assert annotation["image_id"] in image_ids
 
 data_set_name = f"nightowls_reannotated_train_{total_shots}_shots"
 save_path = f"nightowls_reannotated_train_{total_shots}_shots.json"

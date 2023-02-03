@@ -25,7 +25,7 @@ import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
 from detectron2.config import LazyCall as L
-from detectron2.data import MetadataCatalog, get_detection_dataset_dicts
+from detectron2.data import MetadataCatalog, get_detection_dataset_dicts, build_detection_test_loader
 from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, hooks, launch
 from detectron2.evaluation import (
     CityscapesInstanceEvaluator,
@@ -46,6 +46,8 @@ from detectron2 import model_zoo
 from detectron2.config import instantiate
 from detectron2.engine.defaults import create_ddp_model
 import torch
+
+TEST_BATCH_SIZE = 1
 
 VisionTransformers = {
     "ViT-Base":            "nightowls_rcnn_vitdet_b.py",
@@ -147,12 +149,17 @@ class Trainer(DefaultTrainer):
         return model
 
     @classmethod
+    def build_test_loader(cls, cfg, dataset_name):
+        return build_detection_test_loader(cfg, dataset_name, batch_size=TEST_BATCH_SIZE)
+
+    @classmethod
     def build_train_loader(cls, cfg):
         if cfg.MODEL.BACKBONE.NAME in VisionTransformers.keys():
             logger = logging.getLogger("detectron2.trainer")
             logger.info(f"Configuring {cfg.MODEL.BACKBONE.NAME} train data loader.")
             train_loader_config = model_zoo.get_config(VisionTransformers[cfg.MODEL.BACKBONE.NAME]).dataloader.train
             train_loader_config.dataset = L(get_detection_dataset_dicts)(names=cfg.DATASETS.TRAIN)
+            train_loader_config.total_batch_size = cfg.SOLVER.IMS_PER_BATCH
             return instantiate(train_loader_config)
         else:
             return super().build_train_loader(cfg)
