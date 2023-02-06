@@ -10,7 +10,8 @@ DATALOADER:
   NUM_WORKERS: 1
 
 DATASETS:
-  TRAIN: ("coco_2017_train_100_plus_shots","nightowls_reannotated_train_799_shots")
+  # TRAIN: ("coco_2017_train_100_plus_shots","nightowls_reannotated_train_799_shots")
+  TRAIN: ("nightowls_reannotated_train_799_shots",)
   TEST: ("coco_2017_val","nightowls_val","nightowls_reannotated_train_799_shots")
 
 INPUT:
@@ -37,10 +38,10 @@ SOLVER:
   # COCO100 + NightOwlsR193: 1 epoch == 3101
   # COCO100 + NightOwlsR336: 1 epoch == 3115
   # COCO100 + NightOwlsR799: 1 epoch == 3159
-  STEPS: (5000, 7500)
-  MAX_ITER: 8000
+  STEPS: (200, 450)
+  MAX_ITER: 500
 
 TEST:
-  EVAL_PERIOD: 1000
+  EVAL_PERIOD: 50
 
-OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-B_640_COCO100_NOR799_L1_80e"
+OUTPUT_DIR: "output/Cascade_RCNN_MViTv2-B_640_NOR799_L1_210e"
