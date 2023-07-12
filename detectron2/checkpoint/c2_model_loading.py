@@ -318,15 +318,15 @@ def align_and_update_state_dicts(model_state_dict, ckpt_state_dict, c2_conversio
             key_checkpoint = original_keys[key_model]
             shape = str(tuple(model_state_dict[key_model].shape))
             table.append((key_model[len(common_prefix) :], key_checkpoint, shape))
-    table_str = tabulate(
-        table, tablefmt="pipe", headers=["Names in Model", "Names in Checkpoint", "Shapes"]
-    )
-    logger.info(
-        "Following weights matched with "
-        + (f"submodule {common_prefix[:-1]}" if common_prefix else "model")
-        + ":\n"
-        + table_str
-    )
+    # table_str = tabulate(
+    #     table, tablefmt="pipe", headers=["Names in Model", "Names in Checkpoint", "Shapes"]
+    # )
+    # logger.info(
+    #     "Following weights matched with "
+    #     + (f"submodule {common_prefix[:-1]}" if common_prefix else "model")
+    #     + ":\n"
+    #     + table_str
+    # )
 
     unmatched_ckpt_keys = [k for k in ckpt_keys if k not in set(matched_keys.keys())]
     for k in unmatched_ckpt_keys:
