@@ -394,6 +394,7 @@ class COCOEvaluator(DatasetEvaluator):
         self._logger.info("Per-category {} AP: \n".format(iou_type) + table)
 
         results.update({"AP-" + name: ap for name, ap in results_per_category})
+        classAP = results_flatten[1::2]
 
         results_per_category = []
         for idx, name in enumerate(class_names):
@@ -418,6 +419,8 @@ class COCOEvaluator(DatasetEvaluator):
         self._logger.info("Per-category {} AP60: \n".format(iou_type) + table)
 
         results.update({"AP60-" + name: ap for name, ap in results_per_category})
+        classAP += results_flatten[1::2]
+        self._logger.info(str(classAP).replace(" ", ""))
         return results
 
 
