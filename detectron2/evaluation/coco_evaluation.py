@@ -344,7 +344,7 @@ class COCOEvaluator(DatasetEvaluator):
 
         metrics = {
             "bbox": ["AP", "AP50", "AP75", "APs", "APm", "APl", "AR1", "AR10", "AR100", "ARs", "ARm", "ARl"],
-            "segm": ["AP", "AP50", "AP75", "APs", "APm", "APl"],
+            "segm": ["AP", "AP50", "AP75", "APs", "APm", "APl", "AR100", "ARs", "ARm", "ARl"],
             "keypoints": ["AP", "AP50", "AP75", "APm", "APl"],
         }[iou_type]
 
@@ -419,8 +419,9 @@ class COCOEvaluator(DatasetEvaluator):
         self._logger.info("Per-category {} AP60: \n".format(iou_type) + table)
 
         results.update({"AP60-" + name: ap for name, ap in results_per_category})
-        classAP += results_flatten[1::2]
-        self._logger.info(str(classAP).replace(" ", ""))
+        results_list = [x for x in results.values()]
+        np.set_printoptions(floatmode="fixed", precision=5, linewidth=160)
+        self._logger.info("AP & AR\n%s", str(np.array(results_list)).replace(" ", ",")[1:-1])
         return results
 
 
