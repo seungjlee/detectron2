@@ -363,7 +363,10 @@ class COCOEvaluator(DatasetEvaluator):
         if not np.isfinite(sum(results.values())):
             self._logger.info("Some metrics cannot be computed and is shown as NaN.")
 
+        np.set_printoptions(floatmode="fixed", precision=5, linewidth=160)
         if class_names is None or len(class_names) <= 1:
+            results_list = [v for k,v in results.items() if k not in ("AR1", "AR10")]
+            self._logger.info("AP & AR\n%s", str(np.array(results_list)).replace(" ", ",")[1:-1])
             return results
         # Compute per-category AP
         # from https://github.com/facebookresearch/Detectron/blob/a6a835f5b8208c45d0dce217ce9bbda915f44df7/detectron/datasets/json_dataset_evaluator.py#L222-L252 # noqa
@@ -420,7 +423,6 @@ class COCOEvaluator(DatasetEvaluator):
 
         results.update({"AP60-" + name: ap for name, ap in results_per_category})
         results_list = [v for k,v in results.items() if k not in ("AR1", "AR10")]
-        np.set_printoptions(floatmode="fixed", precision=5, linewidth=160)
         self._logger.info("AP & AR\n%s", str(np.array(results_list)).replace(" ", ",")[1:-1])
         return results
 
