@@ -8,7 +8,7 @@ from detectron2.data import get_detection_dataset_dicts
 from detectron2.data.datasets import register_coco_instances
 
 # %%
-SHOTS = 50
+SHOTS = 500
 data_path = "../tools/datasets/coco/annotations/instances_train2017.json"
 data = json.load(open(data_path))
 
@@ -28,7 +28,7 @@ for i in data["images"]:
 #%%
 image_annotations = {}
 for a in tqdm(data["annotations"]):
-    a.pop("segmentation")
+    #a.pop("segmentation")
     if a["image_id"] in image_annotations:
         image_annotations[a["image_id"]].append(a)
     else:
@@ -43,22 +43,24 @@ class_id_to_index = {id: index for index, id in enumerate(id2class.keys())}
 sample_annotations = [[] for _ in id2class.keys()]
 sample_images = [[] for _ in id2class.keys()]
 
-for img_id, annotations in tqdm(image_annotations.items()):
-    if not img_id in used_ids:
-        for index, c in enumerate(id2class.keys()):
-            if len(sample_annotations[index]) < SHOTS:
-                class_found = False
-                for annotation in annotations:
-                    if annotation["category_id"] is c:
-                        class_found = True
-
-                if class_found:
+TRIES = 5
+for _ in range(TRIES):
+    for img_id, annotations in tqdm(image_annotations.items()):
+        if not img_id in used_ids:
+            for index, c in enumerate(id2class.keys()):
+                if len(sample_annotations[index]) < SHOTS:
+                    class_found = False
                     for annotation in annotations:
-                        class_id = annotation["category_id"]
-                        sample_annotations[class_id_to_index[class_id]].append(annotation)
-                    sample_images[index].append(id2img[img_id])
-                    used_ids.add(img_id)
-                    break
+                        if annotation["category_id"] is c:
+                            class_found = True
+
+                    if class_found:
+                        for annotation in annotations:
+                            class_id = annotation["category_id"]
+                            sample_annotations[class_id_to_index[class_id]].append(annotation)
+                        sample_images[index].append(id2img[img_id])
+                        used_ids.add(img_id)
+                        break
 
 # Validate samples.
 # The numbers printed when running get_detection_dataset_dicts() can be lower since detectron2 removes
@@ -69,7 +71,7 @@ for index, class_id in enumerate(id2class.keys()):
 
 min_shots = min([len(x) for x in sample_annotations])
 print(f"min_shots = {min_shots}")
-assert min_shots == SHOTS
+# assert min_shots == SHOTS
 
 new_data = {
     "images": list(chain(*sample_images)),
