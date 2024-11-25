@@ -1,0 +1,39 @@
+_BASE_: "./Base-RCNN-FPN.yaml"
+MODEL:
+  BACKBONE:
+    NAME: "cascade_rcnn_vitdet_h"
+  MASK_ON: False
+  WEIGHTS: "detectron2://ViTDet/COCO/cascade_mask_rcnn_vitdet_h/f328730692/model_final_f05665.pkl"
+  ANCHOR_GENERATOR:
+    SIZES: [[32], [64], [128], [256], [512]]
+    ASPECT_RATIOS: [[0.5, 1.0, 2.0]]
+  ROI_HEADS:
+    NUM_CLASSES: 80
+  RPN:
+    IN_FEATURES: ["p2", "p3", "p4", "p5", "p6"]
+
+DATALOADER:
+  NUM_WORKERS: 1
+
+DATASETS:
+  TRAIN: ("coco_2017_train",)
+  TEST: ("coco_2017_val",)
+
+INPUT:
+  FORMAT: "RGB"
+
+SOLVER:
+  AMP:
+    ENABLED: True
+
+  IMS_PER_BATCH: 4
+  MAX_ITER: 30000
+  STEPS: (10000, 28000)
+  WARMUP_ITERS: 200
+  BASE_LR: 0.0001
+  CHECKPOINT_PERIOD: 5000
+
+TEST:
+  EVAL_PERIOD: 1000
+
+OUTPUT_DIR: "/Data/Models"

@@ -1,0 +1,40 @@
+_BASE_: "./Base-RCNN-FPN.yaml"
+MODEL:
+  BACKBONE:
+    NAME: "cascade_rcnn_mvitv2_b_in21k"
+    FREEZE_AT: 1
+  MASK_ON: True
+  WEIGHTS: "detectron2://ViTDet/COCO/cascade_mask_rcnn_mvitv2_b_in21k/f325820315/model_final_8c3da3.pkl"
+  ANCHOR_GENERATOR:
+    SIZES: [[32], [64], [128], [256], [512]]
+    ASPECT_RATIOS: [[0.5, 1.0, 2.0]]
+  ROI_HEADS:
+    NUM_CLASSES: 80
+  RPN:
+    IN_FEATURES: ["p2", "p3", "p4", "p5", "p6"]
+
+DATALOADER:
+  NUM_WORKERS: 4
+
+DATASETS:
+  TRAIN: ("coco_2017_train",)
+  TEST: ("coco_2017_val",)
+
+INPUT:
+  FORMAT: "RGB"
+
+SOLVER:
+  AMP:
+    ENABLED: True
+
+  IMS_PER_BATCH: 32
+  MAX_ITER: 28000
+  STEPS: (14000, 24000)
+  WARMUP_ITERS: 500
+  BASE_LR: 0.0001
+  CHECKPOINT_PERIOD: 200
+
+TEST:
+  EVAL_PERIOD: 200
+
+OUTPUT_DIR: "/Data/Models"
