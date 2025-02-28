@@ -26,7 +26,7 @@ from detectron2.modeling.proposal_generator import RPN, StandardRPNHead
 
 from detectron2 import model_zoo
 from detectron2.config import instantiate
-from detectron2.utils.analysis import parameter_count_table
+from .Common import ParameterCountTable
 
 LAZY_CONFIG_PATH = "./config/"
 
@@ -106,7 +106,7 @@ class Trainer(DefaultTrainer):
             model = super().build_model(cfg)
 
         model.to("cuda")
-        logger.info("Model Parameters:\n%s", parameter_count_table(model, max_depth=2))
+        logger.info("Model Parameters:\n%s", ParameterCountTable(model, max_depth=2))
         return model
 
     @classmethod
