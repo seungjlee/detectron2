@@ -31,6 +31,8 @@ from .Common import ParameterCountTable
 LAZY_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 
 LazyConfigurations = {
+    "mask_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_b_in21k.py",
+
     "cascade_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_b_in21k.py",
     "cascade_rcnn_mvitv2_l_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_l_in21k.py",
     "cascade_rcnn_mvitv2_h_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_h_in21k.py",
@@ -41,6 +43,10 @@ LazyConfigurations = {
 }
 
 class Trainer(DefaultTrainer):
+    def __init__(self, cfg, best_checkpointer_metric="mask_rcnn/accuracy", best_checkpointer_mode="max"):
+        self.best_checkpointer_metric = best_checkpointer_metric
+        self.best_checkpointer_mode = best_checkpointer_mode
+        super().__init__(cfg)
 
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
@@ -169,7 +175,9 @@ class Trainer(DefaultTrainer):
             self.model, # pylint: disable=no-member
             cfg.OUTPUT_DIR,
         )
-        hooks.insert(-1, BestCheckpointer(cfg.TEST.EVAL_PERIOD, checkpointer, "drone_fixed_wing_val_v2/bbox/APs", "max",))
+
+        hooks.insert(-1, BestCheckpointer(cfg.TEST.EVAL_PERIOD, checkpointer,
+                                          self.best_checkpointer_metric, self.best_checkpointer_mode))
         return hooks
 
     @staticmethod

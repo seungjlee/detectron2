@@ -12,4 +12,4 @@ BOX_HEADS_FULLY_CONNECTED_DIM = 1024  # For original model configuration, set th
 dataloader, train = GetConfigs(IMAGE_SIZE)
 train.IMAGE_SIZE = IMAGE_SIZE
 
-model = GetModel(IMAGE_SIZE, CONV_DIM, BOX_HEADS_FULLY_CONNECTED_DIM)
+model = GetModel(IMAGE_SIZE, CONV_DIM, BOX_HEADS_FULLY_CONNECTED_DIM, cascade_roi_heads=False)

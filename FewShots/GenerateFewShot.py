@@ -8,7 +8,7 @@ from detectron2.data import get_detection_dataset_dicts
 from detectron2.data.datasets import register_coco_instances
 
 # %%
-SHOTS = 10
+SHOTS = 5
 data_path = "../tools/datasets/coco/annotations/instances_train2017.json"
 data = json.load(open(data_path))
 
