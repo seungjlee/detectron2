@@ -23,10 +23,10 @@ def GetConfigs(image_size):
             is_train=True,
             augmentations=[
                 L(T.RandomFlip)(horizontal=True, vertical=False),
-                #L(T.RandomRotation)(angle=(0,45,90,135), sample_style="choice"),
+                #L(T.RandomRotation)(angle=(0,90), sample_style="choice"),
                 L(T.FixedSizeCrop)(crop_size=(image_size, image_size), pad=True),
-                #L(T.RandomContrast)(intensity_min=0.8, intensity_max=1.2),
-                #L(T.RandomBrightness)(intensity_min=0.8, intensity_max=1.2),
+                #L(T.RandomContrast)(intensity_min=0.9, intensity_max=1.1),
+                #L(T.RandomBrightness)(intensity_min=0.9, intensity_max=1.1),
             ],
             image_format="RGB",
             use_instance_mask=True,

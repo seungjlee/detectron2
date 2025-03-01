@@ -28,7 +28,7 @@ from detectron2 import model_zoo
 from detectron2.config import instantiate
 from .Common import ParameterCountTable
 
-LAZY_CONFIG_PATH = "./config/"
+LAZY_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 
 LazyConfigurations = {
     "cascade_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_b_in21k.py",
@@ -100,8 +100,12 @@ class Trainer(DefaultTrainer):
                     model.backbone.net.requires_grad_(False) # ViT is a little different from other models.
                 else:
                     model.backbone.bottom_up.requires_grad_(False)
-            elif cfg.MODEL.BACKBONE.FREEZE_AT > 1:
+            
+            if cfg.MODEL.BACKBONE.FREEZE_AT > 1:
                 model.backbone.requires_grad_(False) # Freeze backbone.
+            
+            if cfg.MODEL.BACKBONE.FREEZE_AT > 2:
+                model.proposal_generator.requires_grad_(False) # Freeze RPN.
         else:
             model = super().build_model(cfg)
 
