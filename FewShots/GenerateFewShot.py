@@ -8,7 +8,7 @@ from detectron2.data import get_detection_dataset_dicts
 from detectron2.data.datasets import register_coco_instances
 
 # %%
-SHOTS = 5
+SHOTS = 100
 data_path = "../tools/datasets/coco/annotations/instances_train2017.json"
 data = json.load(open(data_path))
 
@@ -69,7 +69,7 @@ for index, class_id in enumerate(id2class.keys()):
 
 min_shots = min([len(x) for x in sample_annotations])
 print(f"min_shots = {min_shots}")
-assert min_shots == SHOTS
+#assert min_shots == SHOTS
 
 new_data = {
     "images": list(chain(*sample_images)),

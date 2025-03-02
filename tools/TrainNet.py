@@ -54,6 +54,7 @@ def main(arguments):
     trainer.resume_or_load(resume=arguments.resume)
 
     with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=FutureWarning)
         warnings.simplefilter("ignore", category=UserWarning)
         return trainer.train()
 

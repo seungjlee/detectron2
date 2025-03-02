@@ -23,6 +23,9 @@ def GetConfigs(image_size):
             is_train=True,
             augmentations=[
                 L(T.RandomFlip)(horizontal=True, vertical=False),
+                L(T.ResizeScale)(
+                    min_scale=0.1, max_scale=2.0, target_height=image_size, target_width=image_size
+                ),
                 #L(T.RandomRotation)(angle=(0,90), sample_style="choice"),
                 L(T.FixedSizeCrop)(crop_size=(image_size, image_size), pad=True),
                 #L(T.RandomContrast)(intensity_min=0.9, intensity_max=1.1),
