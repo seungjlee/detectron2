@@ -5,7 +5,7 @@
 from .Config import GetConfigs # pylint: disable=relative-beyond-top-level
 from .MViT_V2_Base import GetModel # pylint: disable=relative-beyond-top-level
 
-IMAGE_SIZE = 1024  # For original model configuration, set this to 1024.
+IMAGE_SIZE = 1280  # For original model configuration, set this to 1024.
 CONV_DIM = 256  # For original model configuration, set this to 256.
 BOX_HEADS_FULLY_CONNECTED_DIM = 1024  # For original model configuration, set this to 1024.
 

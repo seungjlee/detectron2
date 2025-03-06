@@ -16,7 +16,13 @@ from detectron2.engine import default_argument_parser, launch
 from detectron2.engine.defaults import create_ddp_model
 from detectron2.evaluation import verify_results
 
+from Model.Common import ParameterCountTable
 from Model.trainer import Trainer
+
+import builtins
+import collections
+import omegaconf
+import typing
 
 # %%
 def main(arguments):
@@ -29,7 +35,7 @@ def main(arguments):
                                 "datasets/instances_train2017_500_plus_shots.json",
                                 "datasets/coco/train2017")
         register_coco_instances("coco_2017_val_plus", {},
-                                "datasets/instances_val2017_plus.json",
+                                "datasets/coco_2017_val_plus.json",
                                 "datasets/coco/val2017")
     except AssertionError:
         print("Data already registered.")
@@ -39,10 +45,14 @@ def main(arguments):
     if arguments.eval_only:
         model = Trainer.build_model(cfg)
         # print(model)
+        with open(cfg.MODEL.WEIGHTS, "rb") as f:
+            unsafe_list = torch.serialization.get_unsafe_globals_in_checkpoint(f)
+            unsafe_list = [eval(unsafe) for unsafe in unsafe_list]
+            with torch.serialization.safe_globals(unsafe_list):
+                DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
+                    cfg.MODEL.WEIGHTS, resume=arguments.resume
+                )
         model = create_ddp_model(model, fp16_compression=True)
-        DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
-            cfg.MODEL.WEIGHTS, resume=arguments.resume
-        )
         model.eval()
         with torch.no_grad(), torch.amp.autocast("cuda"):
             res = Trainer.test(cfg, model)
