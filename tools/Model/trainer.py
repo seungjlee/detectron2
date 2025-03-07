@@ -32,7 +32,9 @@ LAZY_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 
 LazyConfigurations = {
     "mask_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_b_in21k.py",
+    "mask_rcnn_mvitv2_t": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_t.py",
     "mask_rcnn_vitdet_b": f"{LAZY_CONFIG_PATH}mask_rcnn_vitdet_b.py",
+    "mask_rcnn_vitdet_mini": f"{LAZY_CONFIG_PATH}mask_rcnn_vitdet_mini.py",
 
     "cascade_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_b_in21k.py",
     "cascade_rcnn_mvitv2_l_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_l_in21k.py",
@@ -102,8 +104,8 @@ class Trainer(DefaultTrainer):
                              model.roi_heads.box_predictor.test_topk_per_image,
                              model.roi_heads.box_predictor.test_nms_thresh))
 
-            # if "vitdet" in cfg.MODEL.BACKBONE.NAME:
-            #     model.backbone.net.blocks = model.backbone.net.blocks[:1]
+            if "vitdet_mini" in cfg.MODEL.BACKBONE.NAME:
+                model.backbone.net.blocks = model.backbone.net.blocks[:2]
 
             if cfg.MODEL.BACKBONE.FREEZE_AT > 0:
                 if "vitdet" in cfg.MODEL.BACKBONE.NAME:

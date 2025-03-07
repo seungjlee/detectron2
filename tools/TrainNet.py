@@ -45,13 +45,18 @@ def main(arguments):
     if arguments.eval_only:
         model = Trainer.build_model(cfg)
         # print(model)
-        with open(cfg.MODEL.WEIGHTS, "rb") as f:
-            unsafe_list = torch.serialization.get_unsafe_globals_in_checkpoint(f)
-            unsafe_list = [eval(unsafe) for unsafe in unsafe_list]
-            with torch.serialization.safe_globals(unsafe_list):
-                DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
-                    cfg.MODEL.WEIGHTS, resume=arguments.resume
-                )
+        if cfg.MODEL.WEIGHTS.startswith("detectron2://"):
+            DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
+                cfg.MODEL.WEIGHTS, resume=arguments.resume
+            )
+        else:
+            with open(cfg.MODEL.WEIGHTS, "rb") as f:
+                unsafe_list = torch.serialization.get_unsafe_globals_in_checkpoint(f)
+                unsafe_list = [eval(unsafe) for unsafe in unsafe_list]
+                with torch.serialization.safe_globals(unsafe_list):
+                    DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
+                        cfg.MODEL.WEIGHTS, resume=arguments.resume
+                    )
         model = create_ddp_model(model, fp16_compression=True)
         model.eval()
         with torch.no_grad(), torch.amp.autocast("cuda"):
@@ -61,7 +66,14 @@ def main(arguments):
             return res
 
     trainer = Trainer(cfg)
-    trainer.resume_or_load(resume=arguments.resume)
+    if cfg.MODEL.WEIGHTS.startswith("detectron2://"):
+        trainer.resume_or_load(resume=arguments.resume)
+    else:
+        with open(cfg.MODEL.WEIGHTS, "rb") as f:
+            unsafe_list = torch.serialization.get_unsafe_globals_in_checkpoint(f)
+            unsafe_list = [eval(unsafe) for unsafe in unsafe_list]
+            with torch.serialization.safe_globals(unsafe_list):
+                trainer.resume_or_load(resume=arguments.resume)
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=FutureWarning)
