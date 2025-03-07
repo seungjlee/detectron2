@@ -33,6 +33,7 @@ LAZY_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 LazyConfigurations = {
     "mask_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_b_in21k.py",
     "mask_rcnn_mvitv2_t": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_t.py",
+    "mask_rcnn_mvitv2_xt": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_xt.py",
     "mask_rcnn_vitdet_b": f"{LAZY_CONFIG_PATH}mask_rcnn_vitdet_b.py",
     "mask_rcnn_vitdet_mini": f"{LAZY_CONFIG_PATH}mask_rcnn_vitdet_mini.py",
 
@@ -46,7 +47,7 @@ LazyConfigurations = {
 }
 
 class Trainer(DefaultTrainer):
-    def __init__(self, cfg, best_checkpointer_metric="mask_rcnn/accuracy", best_checkpointer_mode="max"):
+    def __init__(self, cfg, best_checkpointer_metric="segm/AP", best_checkpointer_mode="max"):
         self.best_checkpointer_metric = best_checkpointer_metric
         self.best_checkpointer_mode = best_checkpointer_mode
         super().__init__(cfg)
