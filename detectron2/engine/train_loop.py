@@ -469,9 +469,8 @@ class AMPTrainer(SimpleTrainer):
         )
 
         if grad_scaler is None:
-            from torch.cuda.amp import GradScaler
+            grad_scaler = torch.amp.GradScaler()
 
-            grad_scaler = GradScaler()
         self.grad_scaler = grad_scaler
         self.precision = precision
         self.log_grad_scaler = log_grad_scaler

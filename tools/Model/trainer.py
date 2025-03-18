@@ -34,6 +34,7 @@ LazyConfigurations = {
     "mask_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_b_in21k.py",
     "mask_rcnn_mvitv2_t": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_t.py",
     "mask_rcnn_mvitv2_xt": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_xt.py",
+    "mask_rcnn_mvitv2_xxt": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_xxt.py",
     "mask_rcnn_vitdet_b": f"{LAZY_CONFIG_PATH}mask_rcnn_vitdet_b.py",
     "mask_rcnn_vitdet_mini": f"{LAZY_CONFIG_PATH}mask_rcnn_vitdet_mini.py",
 
@@ -123,7 +124,7 @@ class Trainer(DefaultTrainer):
             model = super().build_model(cfg)
 
         model.to("cuda")
-        logger.info("Model Parameters:\n%s", ParameterCountTable(model, max_depth=2))
+        logger.info("Model Parameters:\n%s", ParameterCountTable(model, max_depth=3))
         return model
 
     @classmethod

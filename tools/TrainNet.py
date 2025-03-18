@@ -16,8 +16,8 @@ from detectron2.engine import default_argument_parser, launch
 from detectron2.engine.defaults import create_ddp_model
 from detectron2.evaluation import verify_results
 
-from Model.Common import ParameterCountTable
-from Model.trainer import Trainer
+from Model.Common import ParameterCountTable # type: ignore
+from Model.trainer import Trainer # type: ignore
 
 import builtins
 import collections

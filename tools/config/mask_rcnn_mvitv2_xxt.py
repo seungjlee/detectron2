@@ -15,9 +15,9 @@ from detectron2.modeling.roi_heads import (
 
 IMAGE_SIZE = 1024  # For original model configuration, set this to 1024.
 
-BOX_HEAD_CONVOLUTION_DIM = 192  # For original model configuration, set this to 256.
-BOX_HEAD_CONVOLUTIONS = 4  # For original model configuration, set this to 4.
-BOX_HEAD_FULLY_CONNECTED_DIM = 800  # For original model configuration, set this to 1024.
+BOX_HEAD_CONVOLUTION_DIM = 128  # For original model configuration, set this to 256.
+BOX_HEAD_CONVOLUTIONS = 2  # For original model configuration, set this to 4.
+BOX_HEAD_FULLY_CONNECTED_DIM = 192  # For original model configuration, set this to 1024.
 
 MASK_HEAD_CONVOLUTION_DIM = 192  # For original model configuration, set this to 256.
 MASK_HEAD_CONVOLUTIONS = 4  # For original model configuration, set this to 4.
