@@ -17,28 +17,28 @@ from detectron2.modeling.roi_heads import (
 
 from .RoiHeads import CascadeROIHeadsPlus # pylint: disable=relative-beyond-top-level
 
-def GetModel(image_size, conv_dim, box_heads_fully_connected_dim, cascade_roi_heads = True):
+def GetModel(image_size, conv_dim, box_heads_fully_connected_dim, cascade_roi_heads = True, fpn=True):
     Model = model_zoo.get_config("common/models/mask_rcnn_fpn.py").model
     constants = model_zoo.get_config("common/data/constants.py").constants
 
     Model.pixel_mean = constants.imagenet_rgb256_mean
     Model.pixel_std = constants.imagenet_rgb256_std
     Model.input_format = "RGB"
-    Model.backbone.bottom_up = L(MViT)(
-        embed_dim=96,
-        depth=24,
-        num_heads=1,
-        last_block_indexes=(1, 4, 20, 23),
-        residual_pooling=True,
-        drop_path_rate=0.4,
-        norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        out_features=("scale2", "scale3", "scale4", "scale5"),
-    )
-    Model.backbone.in_features = "${.bottom_up.out_features}"
-    Model.backbone.square_pad = image_size
+    if fpn:
+        Model.backbone.bottom_up = L(MViT)(
+            embed_dim=96,
+            depth=24,
+            num_heads=1,
+            last_block_indexes=(1, 4, 20, 23),
+            residual_pooling=True,
+            drop_path_rate=0.4,
+            norm_layer=partial(nn.LayerNorm, eps=1e-6),
+            out_features=("scale2", "scale3", "scale4", "scale5"),
+        )
+        Model.backbone.in_features = "${.bottom_up.out_features}"
+        Model.backbone.square_pad = image_size
+        Model.backbone.norm = "LN"  # Use LN in FPN
 
-    # New heads and LN
-    Model.backbone.norm = "LN"  # Use LN in FPN
     Model.roi_heads.box_head.conv_norm = Model.roi_heads.mask_head.conv_norm = "LN"
 
     # 2conv in RPN:

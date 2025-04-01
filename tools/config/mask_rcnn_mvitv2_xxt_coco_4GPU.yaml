@@ -4,7 +4,7 @@ MODEL:
     NAME: "mask_rcnn_mvitv2_xxt"
     FREEZE_AT: 2
   MASK_ON: True
-  #WEIGHTS: "/Data/Models/COCO/20250316-210746/model_0032999.pt"
+  #WEIGHTS: "/Data/Models/COCO/20250316-210746/model_0032999.pth"
   #WEIGHTS: "/Data/Models/COCO/20250317-020134/model_final.pth"
   #WEIGHTS: "/Data/Models/COCO/20250317-121015/model_best.pth"
   WEIGHTS: "/Data/Models/COCO/20250317-175558/model_final.pth"
