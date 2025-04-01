@@ -14,7 +14,7 @@ from detectron2.data import (
 )
 from detectron2.evaluation import COCOEvaluator
 
-def GetConfigs(image_size):
+def GetConfigs(image_size, mask_on=True):
     dataloader = OmegaConf.create()
 
     dataloader.train = L(build_detection_train_loader)(
@@ -32,9 +32,9 @@ def GetConfigs(image_size):
                 #L(T.RandomBrightness)(intensity_min=0.9, intensity_max=1.1),
             ],
             image_format="RGB",
-            use_instance_mask=True,
+            use_instance_mask=mask_on,
             instance_mask_format="polygon",
-            recompute_boxes = True,
+            recompute_boxes = mask_on,
         ),
         total_batch_size=4,
         num_workers=2,
@@ -48,9 +48,9 @@ def GetConfigs(image_size):
                 L(T.ResizeShortestEdge)(short_edge_length=image_size, max_size=image_size),
             ],
             image_format="${...train.mapper.image_format}",
-            use_instance_mask=True,
+            use_instance_mask=mask_on,
             instance_mask_format="polygon",
-            recompute_boxes = True,
+            recompute_boxes = mask_on,
         ),
         num_workers=2,
     )

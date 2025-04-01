@@ -31,7 +31,9 @@ from .Common import ParameterCountTable
 LAZY_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
 
 LazyConfigurations = {
-    "mask_rcnn_c4_mvitv2_xxt": f"{LAZY_CONFIG_PATH}mask_rcnn_c4_mvitv2_xxt.py",
+    "rcnn_mvitv2_xxt": f"{LAZY_CONFIG_PATH}rcnn_mvitv2_xxt.py",
+
+    #"mask_rcnn_c4_mvitv2_xxt": f"{LAZY_CONFIG_PATH}mask_rcnn_c4_mvitv2_xxt.py",
     "mask_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_b_in21k.py",
     "mask_rcnn_mvitv2_t": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_t.py",
     "mask_rcnn_mvitv2_xt": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_xt.py",
@@ -49,9 +51,12 @@ LazyConfigurations = {
 }
 
 class Trainer(DefaultTrainer):
-    def __init__(self, cfg, best_checkpointer_metric="segm/AP", best_checkpointer_mode="max"):
+    TrainMapper = None
+
+    def __init__(self, cfg, best_checkpointer_metric="segm/AP", best_checkpointer_mode="max", trainer_mapper=None):
         self.best_checkpointer_metric = best_checkpointer_metric
         self.best_checkpointer_mode = best_checkpointer_mode
+        Trainer.TrainMapper = trainer_mapper
         super().__init__(cfg)
 
     @classmethod
@@ -146,6 +151,8 @@ class Trainer(DefaultTrainer):
             train_loader_config = Trainer.GetLazyConfig(cfg).dataloader.train
             train_loader_config.dataset = L(get_detection_dataset_dicts)(names=cfg.DATASETS.TRAIN)
             train_loader_config.total_batch_size = cfg.SOLVER.IMS_PER_BATCH
+            if Trainer.TrainMapper:
+                train_loader_config.mapper = Trainer.TrainMapper
             return instantiate(train_loader_config)
         else:
             return super().build_train_loader(cfg)
