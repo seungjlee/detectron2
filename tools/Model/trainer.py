@@ -28,30 +28,31 @@ from detectron2 import model_zoo
 from detectron2.config import instantiate
 from .Common import ParameterCountTable
 
-LAZY_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
-
-LazyConfigurations = {
-    "rcnn_mvitv2_xxt": f"{LAZY_CONFIG_PATH}rcnn_mvitv2_xxt.py",
-
-    #"mask_rcnn_c4_mvitv2_xxt": f"{LAZY_CONFIG_PATH}mask_rcnn_c4_mvitv2_xxt.py",
-    "mask_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_b_in21k.py",
-    "mask_rcnn_mvitv2_t": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_t.py",
-    "mask_rcnn_mvitv2_xt": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_xt.py",
-    "mask_rcnn_mvitv2_xxt": f"{LAZY_CONFIG_PATH}mask_rcnn_mvitv2_xxt.py",
-    "mask_rcnn_vitdet_b": f"{LAZY_CONFIG_PATH}mask_rcnn_vitdet_b.py",
-    "mask_rcnn_vitdet_mini": f"{LAZY_CONFIG_PATH}mask_rcnn_vitdet_mini.py",
-
-    "cascade_rcnn_mvitv2_b_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_b_in21k.py",
-    "cascade_rcnn_mvitv2_l_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_l_in21k.py",
-    "cascade_rcnn_mvitv2_h_in21k": f"{LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_h_in21k.py",
-    "cascade_rcnn_swin_l": f"{LAZY_CONFIG_PATH}cascade_rcnn_swin_l.py",
-    "cascade_rcnn_vitdet_b": f"{LAZY_CONFIG_PATH}cascade_rcnn_vitdet_b.py",
-    "cascade_rcnn_vitdet_l": f"{LAZY_CONFIG_PATH}cascade_rcnn_vitdet_l.py",
-    "cascade_rcnn_vitdet_h": f"{LAZY_CONFIG_PATH}cascade_rcnn_vitdet_h.py",
-}
-
 class Trainer(DefaultTrainer):
     TrainMapper = None
+    LAZY_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../config/")
+
+    @staticmethod
+    def GetLazyConfigurations():
+        return {
+            "rcnn_mvitv2_xxt": f"{Trainer.LAZY_CONFIG_PATH}rcnn_mvitv2_xxt.py",
+
+            #"mask_rcnn_c4_mvitv2_xxt": f"{Trainer.LAZY_CONFIG_PATH}mask_rcnn_c4_mvitv2_xxt.py",
+            "mask_rcnn_mvitv2_b_in21k": f"{Trainer.LAZY_CONFIG_PATH}mask_rcnn_mvitv2_b_in21k.py",
+            "mask_rcnn_mvitv2_t": f"{Trainer.LAZY_CONFIG_PATH}mask_rcnn_mvitv2_t.py",
+            "mask_rcnn_mvitv2_xt": f"{Trainer.LAZY_CONFIG_PATH}mask_rcnn_mvitv2_xt.py",
+            "mask_rcnn_mvitv2_xxt": f"{Trainer.LAZY_CONFIG_PATH}mask_rcnn_mvitv2_xxt.py",
+            "mask_rcnn_vitdet_b": f"{Trainer.LAZY_CONFIG_PATH}mask_rcnn_vitdet_b.py",
+            "mask_rcnn_vitdet_mini": f"{Trainer.LAZY_CONFIG_PATH}mask_rcnn_vitdet_mini.py",
+
+            "cascade_rcnn_mvitv2_b_in21k": f"{Trainer.LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_b_in21k.py",
+            "cascade_rcnn_mvitv2_l_in21k": f"{Trainer.LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_l_in21k.py",
+            "cascade_rcnn_mvitv2_h_in21k": f"{Trainer.LAZY_CONFIG_PATH}cascade_rcnn_mvitv2_h_in21k.py",
+            "cascade_rcnn_swin_l": f"{Trainer.LAZY_CONFIG_PATH}cascade_rcnn_swin_l.py",
+            "cascade_rcnn_vitdet_b": f"{Trainer.LAZY_CONFIG_PATH}cascade_rcnn_vitdet_b.py",
+            "cascade_rcnn_vitdet_l": f"{Trainer.LAZY_CONFIG_PATH}cascade_rcnn_vitdet_l.py",
+            "cascade_rcnn_vitdet_h": f"{Trainer.LAZY_CONFIG_PATH}cascade_rcnn_vitdet_h.py",
+        }
 
     def __init__(self, cfg, best_checkpointer_metric="segm/AP", best_checkpointer_mode="max", trainer_mapper=None):
         self.best_checkpointer_metric = best_checkpointer_metric
@@ -67,7 +68,7 @@ class Trainer(DefaultTrainer):
     @classmethod
     def build_model(cls, cfg):
         logger = logging.getLogger("detectron2.trainer")
-        if cfg.MODEL.BACKBONE.NAME in LazyConfigurations:
+        if cfg.MODEL.BACKBONE.NAME in Trainer.GetLazyConfigurations():
             logger.info("Configuring %s model.", cfg.MODEL.BACKBONE.NAME)
             model_config = Trainer.GetLazyConfig(cfg).model
             model_config.roi_heads.batch_size_per_image = cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE
@@ -135,7 +136,7 @@ class Trainer(DefaultTrainer):
 
     @classmethod
     def build_test_loader(cls, cfg, dataset_name):
-        if cfg.MODEL.BACKBONE.NAME in LazyConfigurations:
+        if cfg.MODEL.BACKBONE.NAME in Trainer.GetLazyConfigurations():
             # Using mainly the old settings here to support multiple datasets.
             test_mapper_config = Trainer.GetLazyConfig(cfg).dataloader.test.mapper
             test_mapper = instantiate(test_mapper_config)
@@ -145,7 +146,7 @@ class Trainer(DefaultTrainer):
 
     @classmethod
     def build_train_loader(cls, cfg):
-        if cfg.MODEL.BACKBONE.NAME in LazyConfigurations:
+        if cfg.MODEL.BACKBONE.NAME in Trainer.GetLazyConfigurations():
             logger = logging.getLogger("detectron2.trainer")
             logger.info("Configuring %s train data loader.", cfg.MODEL.BACKBONE.NAME)
             train_loader_config = Trainer.GetLazyConfig(cfg).dataloader.train
@@ -159,7 +160,7 @@ class Trainer(DefaultTrainer):
 
     @classmethod
     def build_optimizer(cls, cfg, model):
-        if cfg.MODEL.BACKBONE.NAME in LazyConfigurations:
+        if cfg.MODEL.BACKBONE.NAME in Trainer.GetLazyConfigurations():
             logger = logging.getLogger("detectron2.trainer")
             logger.info("Configuring %s optimizer.", cfg.MODEL.BACKBONE.NAME)
             optimizer_config = model_zoo.get_config("common/optim.py").AdamW
@@ -172,7 +173,7 @@ class Trainer(DefaultTrainer):
 
     @classmethod
     def build_lr_scheduler(cls, cfg, optimizer):
-        if cfg.MODEL.BACKBONE.NAME in LazyConfigurations:
+        if cfg.MODEL.BACKBONE.NAME in Trainer.GetLazyConfigurations():
             logger = logging.getLogger("detectron2.trainer")
             logger.info("Configuring %s learning rate scheduler.", cfg.MODEL.BACKBONE.NAME)
             scheduler_config = L(MultiStepParamScheduler)(
@@ -198,7 +199,7 @@ class Trainer(DefaultTrainer):
 
     @staticmethod
     def GetLazyConfig(cfg):
-        return LazyConfig.load(LazyConfigurations[cfg.MODEL.BACKBONE.NAME])
+        return LazyConfig.load(Trainer.GetLazyConfigurations()[cfg.MODEL.BACKBONE.NAME])
 
     @staticmethod
     def SetupLazy(cfg):
@@ -261,7 +262,7 @@ class Trainer(DefaultTrainer):
         cfg = get_cfg()
         cfg.merge_from_file(config_file)
 
-        if cfg.MODEL.BACKBONE.NAME in LazyConfigurations:
+        if cfg.MODEL.BACKBONE.NAME in Trainer.GetLazyConfigurations():
             Trainer.SetupLazy(cfg)
         else:
             Trainer.Setup(cfg)
