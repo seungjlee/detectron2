@@ -7,6 +7,8 @@ import logging
 import os
 from datetime import datetime
 
+import torch
+
 from fvcore.common.param_scheduler import MultiStepParamScheduler
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import LazyCall as L
@@ -66,7 +68,7 @@ class Trainer(DefaultTrainer):
         return DatasetEvaluators([coco_evaluator])
 
     @classmethod
-    def build_model(cls, cfg):
+    def build_model(cls, cfg) -> torch.nn.Module:
         logger = logging.getLogger("detectron2.trainer")
         if cfg.MODEL.BACKBONE.NAME in Trainer.GetLazyConfigurations():
             logger.info("Configuring %s model.", cfg.MODEL.BACKBONE.NAME)

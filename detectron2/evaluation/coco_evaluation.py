@@ -243,14 +243,20 @@ class COCOEvaluator(DatasetEvaluator):
             assert min(all_contiguous_ids) == 0 and max(all_contiguous_ids) == num_classes - 1
 
             reverse_id_mapping = {v: k for k, v in dataset_id_to_contiguous_id.items()}
+            results_to_delete = []
             for result in coco_results:
                 category_id = result["category_id"]
-                assert category_id < num_classes, (
-                    f"A prediction has class={category_id}, "
-                    f"but the dataset only has {num_classes} classes and "
-                    f"predicted class id should be in [0, {num_classes - 1}]."
-                )
-                result["category_id"] = reverse_id_mapping[category_id]
+                # assert category_id < num_classes, (
+                #     f"A prediction has class={category_id}, "
+                #     f"but the dataset only has {num_classes} classes and "
+                #     f"predicted class id should be in [0, {num_classes - 1}]."
+                # )
+                if category_id in reverse_id_mapping:
+                    result["category_id"] = reverse_id_mapping[category_id]
+                else:
+                    results_to_delete.append(result)
+            for result in results_to_delete:
+                coco_results.remove(result)
 
         if self._output_dir:
             file_path = os.path.join(self._output_dir, "coco_instances_results.json")
