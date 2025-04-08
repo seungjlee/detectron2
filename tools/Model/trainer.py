@@ -123,12 +123,18 @@ class Trainer(DefaultTrainer):
                     model.backbone.net.requires_grad_(False) # ViT is a little different from other models.
                 else:
                     model.backbone.bottom_up.requires_grad_(False)
-            
+
             if cfg.MODEL.BACKBONE.FREEZE_AT > 1:
                 model.backbone.requires_grad_(False) # Freeze backbone.
-            
+
             if cfg.MODEL.BACKBONE.FREEZE_AT > 2:
                 model.proposal_generator.requires_grad_(False) # Freeze RPN.
+
+            if cfg.MODEL.BACKBONE.FREEZE_AT == 10:
+                model.requires_grad_(False)
+                model.roi_heads.requires_grad_(True)
+                if hasattr(model.backbone, "bottom_up"):
+                    model.backbone.bottom_up.patch_embed.requires_grad_(True)
         else:
             model = super().build_model(cfg)
 
