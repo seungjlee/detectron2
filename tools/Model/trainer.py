@@ -37,6 +37,8 @@ class Trainer(DefaultTrainer):
     @staticmethod
     def GetLazyConfigurations():
         return {
+            "rcnn_mvitv2_t": f"{Trainer.LAZY_CONFIG_PATH}rcnn_mvitv2_t.py",
+            "rcnn_mvitv2_xt": f"{Trainer.LAZY_CONFIG_PATH}rcnn_mvitv2_xt.py",
             "rcnn_mvitv2_xxt": f"{Trainer.LAZY_CONFIG_PATH}rcnn_mvitv2_xxt.py",
 
             #"mask_rcnn_c4_mvitv2_xxt": f"{Trainer.LAZY_CONFIG_PATH}mask_rcnn_c4_mvitv2_xxt.py",
